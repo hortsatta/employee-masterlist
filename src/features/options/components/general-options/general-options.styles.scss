@@ -1,0 +1,27 @@
+@import "~@blueprintjs/core/lib/scss/variables";
+@import "src/common/styles/styles.scss";
+
+.general-options {
+  padding: 1rem  1.5rem;
+  box-shadow: $pt-elevation-shadow-1;
+
+  &.bp3-dark
+  {
+    box-shadow: $pt-dark-elevation-shadow-1;
+
+    .bp3-switch.night-mode-switch {
+      background-color: $darkColor;
+    }
+  }
+
+  .bp3-switch.night-mode-switch {
+    padding: 0.5rem 50px 0.5rem 0.8rem;
+    display: inline-block;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 99px;
+
+    .bp3-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}

@@ -1,0 +1,52 @@
+.profile-nav {
+  padding: 9px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  max-height: 90px;
+  height: 100%;
+  width: 300px;
+  background-color: rgba(0,0,0,0.35);
+  transition: 0.1s background-color ease;
+
+  &:not(.expand):hover {
+    background-color: rgba(0,0,0,0.1);
+    cursor: pointer;
+  }
+
+  &.expand {
+    span.bp3-icon svg {
+      width: 51px;
+      height: 51px;
+    }
+
+    .profile-content {
+      opacity: 1;
+    }
+  }
+
+  .profile-content {
+    padding: 0 0.8rem;
+    opacity: 0;
+    transition: 0.2s padding ease, 0.2s opacity ease;
+
+    h4, span {
+      color: rgba(255,255,255,0.8);
+    }
+
+    h4 {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    small.custom-link {
+      margin-right: 3px;
+    }
+  }
+
+  span.bp3-icon svg {
+    width: 31px;
+    height: 31px;
+    transition: 0.2s width ease, 0.2s height ease;
+  }
+}

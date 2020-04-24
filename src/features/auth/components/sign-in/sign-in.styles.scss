@@ -1,0 +1,33 @@
+.sign-in {
+  form {
+    padding-top: 0.5rem;
+  }
+
+  .bp3-form-group {
+    margin: 0;
+  }
+
+  .bp3-form-content {
+    .input-field {
+      margin-bottom: 0.5rem;
+      width: 100%;
+
+      &:last-of-type {
+        margin-bottom: 1.5rem;
+      }
+    }
+  }
+
+  .bp3-dialog-footer {
+    margin: 0;
+
+    .bp3-dialog-footer-actions {
+      display: flex;
+      flex-direction: column;
+
+      button.bp3-button {
+        margin: 0;
+      }
+    }
+  }
+}

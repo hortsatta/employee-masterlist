@@ -1,0 +1,22 @@
+.nav-group {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(255,255,255,0);
+  border-bottom: 1px solid rgba(255,255,255,0);
+  transition: 0.12s margin ease, 0.12s padding ease;
+
+  &:not(.hidden) {
+    padding: 4px 0;
+    margin: 4px 0;
+    border-top: 1px solid rgba(0,0,0,0.2);
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+  }
+
+  .nav-group-collapse {
+    &.hidden {
+      display: none;
+    }
+  }
+}
