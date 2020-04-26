@@ -18,7 +18,7 @@ const coreReducer = (state = INITIAL_STATE, action) => {
         ...state,
         darkMode: !state.darkMode
       };
-    case CoreActionTypes.STATE_ERROR:
+    case CoreActionTypes.SET_NOTIFICATION_ERROR:
       return {
         ...state,
         error: action.payload

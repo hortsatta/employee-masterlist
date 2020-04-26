@@ -1,7 +1,7 @@
 const CoreActionTypes = {
   TOGGLE_SIDENAV: 'TOGGLE_SIDENAV',
   TOGGLE_DARK_MODE: 'TOGGLE_DARK_MODE',
-  STATE_ERROR: 'STATE_ERROR'
+  SET_NOTIFICATION_ERROR: 'SET_NOTIFICATION_ERROR'
 };
 
 const toggleSideNav = () => ({
@@ -12,8 +12,8 @@ const toggleDarkMode = () => ({
   type: CoreActionTypes.TOGGLE_DARK_MODE
 });
 
-const stateError = (errorMessage) => ({
-  type: CoreActionTypes.STATE_ERROR,
+const setNotificationError = (errorMessage) => ({
+  type: CoreActionTypes.SET_NOTIFICATION_ERROR,
   payload: errorMessage
 });
 
@@ -21,5 +21,5 @@ export {
   CoreActionTypes,
   toggleSideNav,
   toggleDarkMode,
-  stateError
+  setNotificationError
 };
