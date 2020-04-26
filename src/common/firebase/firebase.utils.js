@@ -19,4 +19,17 @@ firebase.initializeApp(config);
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 
-export { auth, firestore };
+// Batch adding of documents to db
+const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+  const collectionRef = firestore.collection(collectionKey);
+  const batch = firestore.batch();
+  objectsToAdd.forEach((obj) => {
+    // Get a new doc with generated id
+    // Add to batch for single firebase communication
+    const newDocRef = collectionRef.doc();
+    batch.set(newDocRef, obj);
+  });
+  return batch.commit();
+};
+
+export { firebase, auth, firestore, addCollectionAndDocuments };
