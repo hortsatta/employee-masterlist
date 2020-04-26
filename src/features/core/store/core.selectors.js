@@ -12,7 +12,13 @@ const selectDarkMode = createSelector(
   (core) => core.darkMode
 );
 
+const selectCurrentErrorMessage = createSelector(
+  [selectCore],
+  (core) => core.error
+);
+
 export {
   selectExpandSideNav,
-  selectDarkMode
+  selectDarkMode,
+  selectCurrentErrorMessage
 };

@@ -2,7 +2,8 @@ import { CoreActionTypes } from './core.actions';
 
 const INITIAL_STATE = {
   expandSideNav: false,
-  darkMode: false
+  darkMode: false,
+  error: undefined
 };
 
 const coreReducer = (state = INITIAL_STATE, action) => {
@@ -16,6 +17,11 @@ const coreReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         darkMode: !state.darkMode
+      };
+    case CoreActionTypes.STATE_ERROR:
+      return {
+        ...state,
+        error: action.payload
       };
     default:
       return state;
