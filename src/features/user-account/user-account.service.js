@@ -1,28 +1,40 @@
-import { auth, firestore } from 'common/firebase/firebase.utils';
+import { firebase, auth, firestore } from 'common/firebase/firebase.utils';
 
-const createUserDocument = async (userAuth, moreData) => {
-  if (!userAuth) return;
+const createUserDocument = async (user, moreData) => {
+  if (!user) return;
 
-  const userRef = firestore.doc(`users/${userAuth.uid}`);
-  const snapshot = await userRef.get;
+  const usersCollnRef = firestore.collection('users');
+  const userDocRef = usersCollnRef.doc(user.uid);
+  // Get specified user data
+  const snapshot = await userDocRef.get();
 
+  // If user doc does not exists then create it
   if (!snapshot.exists) {
-    const { email } = userAuth;
-    const createdAt = new Date();
+    const { email } = user;
+    const { employeeId, userRoleId } = moreData;
+    const batch = firestore.batch();
+    const fieldValue = firebase.firestore.FieldValue;
+    const userRoleDocRef = userDocRef.collection('userRole').doc();
 
     try {
-      await userRef.set({
-        email,
-        createdAt,
-        ...moreData
-      });
+      // Instantiate objects to be added to db
+      const newUser = { employeeId, email };
+      const newUserRole = { userRoleId, dateFrom: fieldValue.serverTimestamp() };
+      // Add user and user role to batch and then commit
+      batch.set(userDocRef, newUser);
+      batch.set(userRoleDocRef, newUserRole);
+      await batch.commit();
     } catch (error) {
       console.log('error creating user', error.message);
     }
   }
   // eslint-disable-next-line consistent-return
-  return userRef;
+  return userDocRef;
 };
+
+const getUserSnapshotById = async (id) => (
+  firestore.collection('users').doc(id).get()
+);
 
 const getCurrentUser = async () => (
   new Promise((resolve, reject) => {
@@ -39,10 +51,10 @@ const signUpUser = async (credentials) => {
     const { user } = await auth.createUserWithEmailAndPassword(email, password);
     return await createUserDocument(user, moreData);
   } catch (error) {
-    console.log('error sign up user', error.message);
+    console.log('error sign up user', error);
   }
 
   return null;
 };
 
-export { getCurrentUser, signUpUser };
+export { getUserSnapshotById, getCurrentUser, signUpUser };
