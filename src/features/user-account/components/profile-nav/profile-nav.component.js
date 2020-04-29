@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import './profile-nav.styles.scss';
 import { toggleSignInDialog } from 'features/auth/store';
 
-const ProfileNav = ({ isExpanded, onClick, toggleSignInDialogDispatch }) => (
+const ProfileNav = ({ isExpanded, onClick, dispatch }) => (
   <div
     className={`profile-nav ${isExpanded ? 'expand' : ''}`}
     onClick={isExpanded ? null : onClick}
@@ -21,7 +21,7 @@ const ProfileNav = ({ isExpanded, onClick, toggleSignInDialogDispatch }) => (
       <span className='bp3-text-small'>
         <small
           className='custom-link'
-          onClick={toggleSignInDialogDispatch}
+          onClick={() => dispatch(toggleSignInDialog())}
           onKeyUp={isExpanded ? null : onClick}
           role='button'
           tabIndex='0'
@@ -36,15 +36,8 @@ const ProfileNav = ({ isExpanded, onClick, toggleSignInDialogDispatch }) => (
 
 ProfileNav.propTypes = {
   isExpanded: PropTypes.bool.isRequired,
-  toggleSignInDialogDispatch: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
   onClick: PropTypes.func
 };
 
-const mapDispatchToState = (dispatch) => ({
-  toggleSignInDialogDispatch: () => dispatch(toggleSignInDialog())
-});
-
-export default connect(
-  null,
-  mapDispatchToState
-)(ProfileNav);
+export default connect()(ProfileNav);

@@ -1,4 +1,4 @@
-import { firebase, auth, firestore } from 'common/firebase/firebase.utils';
+import { firebase, auth, firestore } from 'common/utils';
 
 const createUserDocument = async (user, moreData) => {
   if (!user) return;
@@ -25,7 +25,7 @@ const createUserDocument = async (user, moreData) => {
       batch.set(userRoleDocRef, newUserRole);
       await batch.commit();
     } catch (error) {
-      console.log('error creating user', error.message);
+      throw error.message;
     }
   }
   // eslint-disable-next-line consistent-return
@@ -51,10 +51,8 @@ const signUpUser = async (credentials) => {
     const { user } = await auth.createUserWithEmailAndPassword(email, password);
     return await createUserDocument(user, moreData);
   } catch (error) {
-    console.log('error sign up user', error);
+    throw error.message;
   }
-
-  return null;
 };
 
 export { getUserSnapshotById, getCurrentUser, signUpUser };

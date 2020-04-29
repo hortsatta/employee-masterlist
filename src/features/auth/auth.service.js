@@ -1,4 +1,4 @@
-import { auth } from 'common/firebase/firebase.utils';
+import { auth, signInMessage } from 'common/utils';
 
 const signInWithEmail = async (credentials) => {
   try {
@@ -6,7 +6,7 @@ const signInWithEmail = async (credentials) => {
     const { user } = await auth.signInWithEmailAndPassword(email, password);
     return user;
   } catch (error) {
-    throw error.message;
+    throw signInMessage(error.code);
   }
 };
 
