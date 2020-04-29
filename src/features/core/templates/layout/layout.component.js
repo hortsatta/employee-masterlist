@@ -5,7 +5,23 @@ import { Switch, Route } from 'react-router-dom';
 import { menuLinks } from 'config/system.config';
 import { SignInDialog } from 'features/auth/containers';
 import routes from '../../root.routes';
-import { SideNavbar, NavGroup, NavItem, MainSection } from '../../components';
+import {
+  SideNavbar,
+  NavGroup,
+  NavItem,
+  MainSection,
+  NotificationPopup
+} from '../../components';
+
+// const tempFunc = async () => {
+//   await signUpUser({
+//     email: 'hortsatta@gmail.com',
+//     password: 'qwerty990',
+//     employeeId: 0,
+//     userRoleId: 2
+//   });
+//   alert('Done');
+// };
 
 const Layout = () => {
   // Create elements with menu links from config file
@@ -44,6 +60,7 @@ const Layout = () => {
           }
         </Switch>
       </MainSection>
+      <NotificationPopup />
       <SignInDialog />
     </div>
   );
