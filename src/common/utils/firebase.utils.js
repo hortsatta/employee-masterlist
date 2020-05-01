@@ -32,4 +32,32 @@ const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
   return batch.commit();
 };
 
-export { firebase, auth, firestore, addCollectionAndDocuments };
+const convertMapToObj = (list) => (
+  list.reduce((acc, item) => {
+    const key = item.departmentId.toLowerCase();
+
+    if (!acc[key]) {
+      acc[key] = [];
+    } else {
+      acc[key] = [...acc[key], item];
+    }
+
+    return acc;
+  }, {})
+);
+
+const convertObjectToMap = (object) => (
+  Object.keys(object).reduce((acc, key) => (
+    acc.concat(key, object[key])
+  ), [])
+);
+
+
+export {
+  firebase,
+  auth,
+  firestore,
+  addCollectionAndDocuments,
+  convertMapToObj,
+  convertObjectToMap
+};
