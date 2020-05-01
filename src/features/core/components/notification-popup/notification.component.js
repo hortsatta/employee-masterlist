@@ -11,9 +11,9 @@ const NotificationPopup = ({ error, dispatch }) => {
   const [toaster, setToaster] = useState(null);
 
   useEffect(() => {
-    if (error === undefined) { return; }
+    if (error === null) { return; }
     toaster && toaster.show({ icon: IconNames.DELETE, message: error, intent: Intent.DANGER });
-    dispatch(setNotificationError(undefined));
+    dispatch(setNotificationError(null));
   }, [error, toaster, dispatch]);
 
   return (
