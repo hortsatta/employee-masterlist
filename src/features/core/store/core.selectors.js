@@ -1,20 +1,20 @@
 import { createSelector } from 'reselect';
 
-const selectCore = (state) => state.core;
+const selectCoreState = (state) => state.core;
 
 const selectExpandSideNav = createSelector(
-  [selectCore],
-  (core) => core.expandSideNav
+  [selectCoreState],
+  (coreState) => coreState.expandSideNav
 );
 
 const selectDarkMode = createSelector(
-  [selectCore],
-  (core) => core.darkMode
+  [selectCoreState],
+  (coreState) => coreState.darkMode
 );
 
 const selectCurrentErrorMessage = createSelector(
-  [selectCore],
-  (core) => core.error
+  [selectCoreState],
+  (coreState) => coreState.error
 );
 
 export {

@@ -2,11 +2,11 @@ import { CoreActionTypes } from './core.actions';
 
 const INITIAL_STATE = {
   expandSideNav: false,
-  darkMode: false,
-  error: undefined
+  error: null,
+  darkMode: false
 };
 
-const coreReducer = (state = INITIAL_STATE, action) => {
+export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case CoreActionTypes.TOGGLE_SIDENAV:
       return {
@@ -27,5 +27,3 @@ const coreReducer = (state = INITIAL_STATE, action) => {
       return state;
   }
 };
-
-export default coreReducer;
