@@ -1,31 +1,28 @@
 import { AuthActionTypes } from './auth.actions';
 
 const INITIAL_STATE = {
-  loading: false,
+  isLoading: false,
   currentUser: null,
-  showSignInDialog: false,
-  error: null
+  showSignInDialog: false
 };
 
-const authReducer = (state = INITIAL_STATE, action) => {
+export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case AuthActionTypes.SIGN_IN_START:
       return {
         ...state,
-        loading: true
+        isLoading: true
       };
     case AuthActionTypes.SIGN_IN_SUCCESS:
       return {
         ...state,
-        loading: false,
-        currentUser: action.payload,
-        error: null
+        isLoading: false,
+        currentUser: action.payload
       };
     case AuthActionTypes.SIGN_IN_FAILURE:
       return {
         ...state,
-        loading: false,
-        error: action.payload
+        isLoading: false
       };
     case AuthActionTypes.TOGGLE_SIGN_IN_DIALOG:
       return {
@@ -36,5 +33,3 @@ const authReducer = (state = INITIAL_STATE, action) => {
       return state;
   }
 };
-
-export default authReducer;

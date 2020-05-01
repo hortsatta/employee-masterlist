@@ -1,20 +1,20 @@
 import { createSelector } from 'reselect';
 
-const selectAuth = (state) => state.auth;
+const selectAuthState = (state) => state.auth;
 
 const selectCurrentUser = createSelector(
-  [selectAuth],
-  (auth) => auth.currentUser
+  [selectAuthState],
+  (authState) => authState.currentUser
 );
 
 const selectIsLoading = createSelector(
-  [selectAuth],
-  (auth) => auth.isLoading
+  [selectAuthState],
+  (authState) => authState.isLoading
 );
 
 const selectShowSignInDialog = createSelector(
-  [selectAuth],
-  (auth) => auth.showSignInDialog
+  [selectAuthState],
+  (authState) => authState.showSignInDialog
 );
 
 export {
