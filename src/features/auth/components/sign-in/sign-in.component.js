@@ -7,7 +7,7 @@ import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
 
 import './sign-in.styles.scss';
-import { InputButton, WithProcessing } from 'common/components';
+import { IconButton, WithProcessing } from 'common/components';
 import { signInStart, selectIsLoading } from 'features/auth/store';
 
 const SignIn = ({ signIn, isDialog, isLoading, isProcessing, doProcess }) => {
@@ -15,7 +15,8 @@ const SignIn = ({ signIn, isDialog, isLoading, isProcessing, doProcess }) => {
   const { email, password, showPassword } = fields;
 
   const lockButton = (
-    <InputButton
+    <IconButton
+      minimal
       content={`${showPassword ? 'Hide' : 'Show'} Password`}
       icon={showPassword ? IconNames.UNLOCK : IconNames.LOCK}
       onClick={() => (
