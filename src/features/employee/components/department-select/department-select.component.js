@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Button, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
@@ -6,8 +7,8 @@ import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
 import Fuse from 'fuse.js';
 
+import { EmptyResult } from 'common/components';
 import { selectAllDepartments } from 'features/department/store';
-import { connect } from 'react-redux';
 
 const searchFilter = (keyword, departments) => {
   if (!keyword) return departments;
@@ -54,6 +55,7 @@ const DepartmentSelect = ({ department, departments, ...otherProps }) => {
       itemRenderer={departmentRender}
       query={keyword}
       onQueryChange={handleQueryChange}
+      noResults={<EmptyResult />}
       {...otherProps}
     >
       <Button

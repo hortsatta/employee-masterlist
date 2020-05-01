@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import Fuse from 'fuse.js';
 
 import { convertMapToObj } from 'common/utils';
+import { EmptyResult } from 'common/components';
 import { selectAllJobTitles } from 'features/job-title/store';
 
 const searchFilter = (keyword, jobTitles) => {
@@ -56,6 +57,7 @@ const JobTitleSelect = ({ jobTitle, department, departmentJobTitles, ...otherPro
       query={keyword}
       onQueryChange={handleQueryChange}
       disabled={!department}
+      noResults={<EmptyResult />}
       {...otherProps}
     >
       <Button
