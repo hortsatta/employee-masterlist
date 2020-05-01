@@ -19,14 +19,14 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
-  ...ownProps,
   onClose: dispatchProps.toggleSignInDialogDispatch,
   isOpen: stateProps.showSignInDialog,
   className: `${stateProps.darkMode ? 'bp3-dark' : ''} sign-in-dialog`,
   icon: IconNames.LOG_IN,
   title: 'Sign In',
   lazy: true,
-  isDialog: true
+  isDialog: true,
+  ...ownProps
 });
 
 export default compose(
