@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import { FormGroup, InputGroup, Button, Classes } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
 
 import './sign-in.styles.scss';
 import { InputButton, WithProcessing } from 'common/components';
-import { signInStart } from 'features/auth/store';
+import { signInStart, selectIsLoading } from 'features/auth/store';
 
-const SignIn = ({ signIn, isDialog, isProcessing, doProcess }) => {
+const SignIn = ({ signIn, isDialog, isLoading, isProcessing, doProcess }) => {
   const [fields, setFields] = useState({ email: '', password: '', showPassword: false });
   const { email, password, showPassword } = fields;
 
@@ -38,12 +39,12 @@ const SignIn = ({ signIn, isDialog, isProcessing, doProcess }) => {
       className={`sign-in ${isDialog ? Classes.DIALOG_BODY : ''}`}
       onSubmit={handleSubmit}
     >
-      <FormGroup disabled={isProcessing}>
+      <FormGroup disabled={isProcessing || isLoading}>
         <InputGroup
           className='input-field'
           name='email'
           type='email'
-          disabled={isProcessing}
+          disabled={isProcessing || isLoading}
           leftIcon={IconNames.ENVELOPE}
           placeholder='Email'
           value={email}
@@ -54,7 +55,7 @@ const SignIn = ({ signIn, isDialog, isProcessing, doProcess }) => {
           className='input-field'
           name='password'
           type={showPassword ? 'text' : 'password'}
-          disabled={isProcessing}
+          disabled={isProcessing || isLoading}
           leftIcon={IconNames.KEY}
           placeholder='Password'
           rightElement={lockButton}
@@ -71,7 +72,7 @@ const SignIn = ({ signIn, isDialog, isProcessing, doProcess }) => {
             intent='primary'
             text='Sign In'
             type='submit'
-            loading={isProcessing}
+            loading={isProcessing || isLoading}
             large
           />
         </div>
@@ -82,14 +83,21 @@ const SignIn = ({ signIn, isDialog, isProcessing, doProcess }) => {
 
 SignIn.propTypes = {
   signIn: PropTypes.func.isRequired,
-  isDialog: PropTypes.bool
+  isDialog: PropTypes.bool,
+  isLoading: PropTypes.bool,
+  isProcessing: PropTypes.bool,
+  doProcess: PropTypes.func
 };
+
+const mapStateToProps = createStructuredSelector({
+  isLoading: selectIsLoading
+});
 
 const mapDispatchToProps = (dispatch) => ({
   signIn: (credentials) => dispatch(signInStart(credentials))
 });
 
 export default compose(
-  connect(null, mapDispatchToProps),
+  connect(mapStateToProps, mapDispatchToProps),
   WithProcessing
 )(SignIn);
