@@ -36,6 +36,12 @@ body {
     margin-bottom: 0.5rem;
     width: 100%;
   }
+
+  .bp3-portal {
+    .bp3-popover-content .bp3-menu .bp3-menu-item.active {
+      background-color:rgba(19, 124, 189, 0.5);
+    }
+  }
 }
 
 code {
