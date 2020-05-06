@@ -1,13 +1,14 @@
 import React from 'react';
-import { InputGroup, Button } from '@blueprintjs/core';
+import { InputGroup, ControlGroup, Button } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
 
-import { InputButton } from 'common/components';
+import { IconButton } from 'common/components';
 
 const InputGroups = ({ items, onChange, onAddEl, onRemoveEl, name, fieldName, ...otherProps }) => {
   const RemoveButton = (i) => (
-    <InputButton
+    <IconButton
+      minimal
       content='Remove Item'
       icon={IconNames.CROSS}
       onClick={() => onRemoveEl(i, fieldName)}
@@ -15,7 +16,10 @@ const InputGroups = ({ items, onChange, onAddEl, onRemoveEl, name, fieldName, ..
   );
 
   return (
-    <div className={`input-groups ${name}-group`}>
+    <ControlGroup
+      vertical
+      className={`input-groups ${name}-group`}
+    >
       {
         items.map((item, i) => (
           <InputGroup
@@ -36,7 +40,7 @@ const InputGroups = ({ items, onChange, onAddEl, onRemoveEl, name, fieldName, ..
         icon={IconNames.PLUS}
         onClick={() => onAddEl(fieldName)}
       />
-    </div>
+    </ControlGroup>
   );
 };
 

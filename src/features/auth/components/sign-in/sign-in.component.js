@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { FormGroup, InputGroup, Button, Classes } from '@blueprintjs/core';
+import { FormGroup, InputGroup, Button, Classes, Intent } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
 
@@ -70,7 +70,7 @@ const SignIn = ({ signIn, isDialog, isLoading, isProcessing, doProcess }) => {
           <Button
             className='submit-button'
             icon={IconNames.LOG_IN}
-            intent='primary'
+            intent={Intent.PRIMARY}
             text='Sign In'
             type='submit'
             loading={isProcessing || isLoading}
