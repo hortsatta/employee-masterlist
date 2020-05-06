@@ -1,0 +1,36 @@
+.employee-info {
+  .row-2 {
+    display: flex;
+  
+    & > * {
+      flex: 1 0 49%;
+  
+      &:not(:last-child) {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    .bp3-control-group {
+      .bp3-popover-wrapper .bp3-popover-target {
+        display: flex;
+
+        > div {
+          width: 100%;
+        }
+
+        button.bp3-button.bp3-fill {
+          justify-content: left;
+
+          span.bp3-button-text {
+            flex: 1;
+          }
+        }
+      }
+
+      .icon-button {
+        flex: 0;
+      }
+    }
+  }
+}
