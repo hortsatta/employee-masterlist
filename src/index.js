@@ -7,13 +7,13 @@ import { FocusStyleManager } from '@blueprintjs/core';
 
 import './index.scss';
 import { store, persistor } from './features/core/store';
-import Layout from './features/core/templates';
+import RootPage from './features/core/pages';
 
 ReactDOM.render(
   <Provider store={store}>
     <PersistGate persistor={persistor}>
       <BrowserRouter>
-        <Layout />
+        <RootPage />
       </BrowserRouter>
     </PersistGate>
   </Provider>,

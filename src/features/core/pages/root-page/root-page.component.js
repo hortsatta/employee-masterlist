@@ -1,10 +1,10 @@
 /* eslint-disable react/no-array-index-key */
-import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { Switch } from 'react-router-dom';
 
 import { menuLinks } from 'config/system.config';
 import { SignInDialog } from 'features/auth/containers';
-import routes from '../../root.routes';
+import RootRoutes from '../../root-routes';
 import {
   SideNavbar,
   NavGroup,
@@ -23,7 +23,7 @@ import {
 //   alert('Done');
 // };
 
-const Layout = () => {
+const RootPage = () => {
   // Create elements with menu links from config file
   const navItems = menuLinks.map(({ icon, text, to, children }, i) => {
     // Create map key
@@ -53,11 +53,9 @@ const Layout = () => {
       </SideNavbar>
       <MainSection>
         <Switch>
-          {
-            Object.values(routes).map((route, i) => (
-              <Route key={`route-${i}`} {...route} />
-            ))
-          }
+          <Suspense fallback={<div>...Loading</div>}>
+            <RootRoutes />
+          </Suspense>
         </Switch>
       </MainSection>
       <NotificationPopup />
@@ -66,4 +64,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default RootPage;
