@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormGroup, InputGroup, Divider } from '@blueprintjs/core';
+import { FormGroup, ControlGroup, InputGroup, Divider } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
 
@@ -28,24 +28,26 @@ const PersonalInfoForm = ({
   return (
     <form className='personal-info'>
       <FormGroup>
-        <InputGroup
-          className='input-field'
-          name='firstName'
-          type='text'
-          placeholder='First Name'
-          onChange={onChange}
-          value={firstName}
-          required
-        />
-        <InputGroup
-          className='input-field'
-          name='lastName'
-          type='text'
-          placeholder='Last Name'
-          onChange={onChange}
-          value={lastName}
-          required
-        />
+        <ControlGroup fill>
+          <InputGroup
+            className='input-field'
+            name='firstName'
+            type='text'
+            placeholder='First Name'
+            onChange={onChange}
+            value={firstName}
+            required
+          />
+          <InputGroup
+            className='input-field'
+            name='lastName'
+            type='text'
+            placeholder='Last Name'
+            onChange={onChange}
+            value={lastName}
+            required
+          />
+        </ControlGroup>
         <div className='row-3'>
           <InputGroup
             className='input-field'

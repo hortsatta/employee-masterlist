@@ -62,7 +62,7 @@ const JobTitleSelect = ({ jobTitle, department, departmentJobTitles, ...otherPro
     >
       <Button
         fill
-        icon={IconNames.LAYOUT_HIERARCHY}
+        icon={IconNames.DIAGRAM_TREE}
         rightIcon={IconNames.CARET_DOWN}
         text={jobTitle ? jobTitle.name : 'Job Title'}
       />

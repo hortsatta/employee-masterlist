@@ -15,6 +15,22 @@
         margin-right: 0.5rem;
       }
     }
+
+    > .bp3-popover-wrapper .bp3-popover-target {
+      display: flex;
+
+      > div {
+        width: 100%;
+      }
+
+      button.bp3-button.bp3-fill {
+        justify-content: left;
+
+        span.bp3-button-text {
+          flex: 1;
+        }
+      }
+    }
   }
 
   .row-2 {
@@ -26,6 +42,14 @@
       &:not(:last-child) {
         margin-right: 0.5rem;
       }
+    }
+  }
+
+  .input-groups {
+    display: block;
+
+    .bp3-input-group {
+      margin-bottom: 0;
     }
   }
 

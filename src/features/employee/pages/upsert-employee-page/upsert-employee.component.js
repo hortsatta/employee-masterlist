@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Callout, H4 } from '@blueprintjs/core';
+import { Button, Callout, H4, Intent, FormGroup, ButtonGroup, Divider } from '@blueprintjs/core';
+import { IconNames } from '@blueprintjs/icons';
 
 import './upsert-employee.styles.scss';
 import { usePrevious } from 'common/custom-hooks';
@@ -21,11 +22,12 @@ const UpsertEmployeePage = () => {
   const [employeeInfoFields, setEmployeeInfoFields] = useState({
     department: null,
     jobTitle: null,
-    hireDate: null
+    hireDate: null,
+    salary: null
   });
 
   const { firstName, lastName, middleInitial, gender, phones, emails } = personalInfoFields;
-  const { department, jobTitle } = employeeInfoFields;
+  const { department, jobTitle, hireDate, salary } = employeeInfoFields;
   // Used to store previous department value for checking select component
   const prevDepartment = usePrevious(department);
 
@@ -90,6 +92,29 @@ const UpsertEmployeePage = () => {
           fields={employeeInfoFields}
           onChange={handleEmployeeInfoChange}
         />
+      </Callout>
+      <Callout className='controls'>
+        <FormGroup>
+          <Button
+            minimal
+            type='button'
+            text='Reset Fields'
+            icon={IconNames.RESET}
+          />
+          <ButtonGroup minimal>
+            <Button
+              text='Cancel'
+              type='button'
+            />
+            <Divider />
+            <Button
+              type='button'
+              text='Add Employee'
+              intent={Intent.SUCCESS}
+              icon={IconNames.ADD}
+            />
+          </ButtonGroup>
+        </FormGroup>
       </Callout>
     </div>
   );
