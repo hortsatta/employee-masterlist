@@ -15,7 +15,7 @@ const HistoryButton = (props) => (
 const EmployeeInfoForm = ({ fields, onChange }) => {
   const { department, jobTitle, hireDate, salary } = fields;
   return (
-    <form className='employee-info'>
+    <div className='employee-info'>
       <FormGroup>
         <div className='row-2'>
           <MomentDateInput
@@ -57,7 +57,7 @@ const EmployeeInfoForm = ({ fields, onChange }) => {
           </ControlGroup>
         </div>
       </FormGroup>
-    </form>
+    </div>
   );
 };
 

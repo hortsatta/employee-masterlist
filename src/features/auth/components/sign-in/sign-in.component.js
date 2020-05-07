@@ -7,7 +7,8 @@ import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
 
 import './sign-in.styles.scss';
-import { IconButton, WithProcessing } from 'common/components';
+import { WithProcessing } from 'common/containers';
+import { IconButton } from 'common/components';
 import { signInStart, selectIsLoading } from 'features/auth/store';
 
 const SignIn = ({ signIn, isDialog, isLoading, isProcessing, doProcess }) => {

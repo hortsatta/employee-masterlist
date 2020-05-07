@@ -2,6 +2,7 @@ import React from 'react';
 import { DateInput } from '@blueprintjs/datetime';
 import { IconNames } from '@blueprintjs/icons';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 
 import { IconButton } from 'common/components';
 
@@ -14,10 +15,17 @@ const calendarButton = (
   <IconButton minimal content='Select Date' icon={IconNames.CALENDAR} />
 );
 
-export default (props) => (
+const MomentDateInput = ({ required, ...otherProps }) => (
   <DateInput
     rightElement={calendarButton}
+    inputProps={{ required }}
     {...getMomentFormatter('MM/DD/YYYY')}
-    {...props}
+    {...otherProps}
   />
 );
+
+MomentDateInput.propTypes = {
+  required: PropTypes.bool
+};
+
+export default MomentDateInput;

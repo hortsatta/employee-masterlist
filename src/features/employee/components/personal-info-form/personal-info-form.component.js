@@ -26,7 +26,7 @@ const PersonalInfoForm = ({
   } = fields;
 
   return (
-    <form className='personal-info'>
+    <div className='personal-info'>
       <FormGroup>
         <ControlGroup fill>
           <InputGroup
@@ -65,10 +65,12 @@ const PersonalInfoForm = ({
             locale='en'
             value={birthDate}
             fill
+            required
           />
           <GenderSelect
             gender={fields.gender}
             onItemSelect={(e) => onChange({ target: { value: e, name: 'gender' } })}
+            required
           />
         </div>
         <Divider />
@@ -106,6 +108,7 @@ const PersonalInfoForm = ({
             onChange={onInputGroupsChange}
             onAddEl={onAddInputGroupsEl}
             onRemoveEl={onRemoveInputGroupsEl}
+            required
           />
           <InputGroups
             items={emails}
@@ -117,10 +120,11 @@ const PersonalInfoForm = ({
             onChange={onInputGroupsChange}
             onAddEl={onAddInputGroupsEl}
             onRemoveEl={onRemoveInputGroupsEl}
+            required
           />
         </div>
       </FormGroup>
-    </form>
+    </div>
   );
 };
 

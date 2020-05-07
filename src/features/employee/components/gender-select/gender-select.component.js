@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 const GENDERS = ['Male', 'Female'];
 
-const GenderSelect = ({ gender, ...otherProps }) => {
+const GenderSelect = ({ gender, required, ...otherProps }) => {
   const genderRender = (item, { handleClick }) => (
     <MenuItem
       className={gender && gender === item && 'active'}
@@ -22,6 +22,7 @@ const GenderSelect = ({ gender, ...otherProps }) => {
       filterable={false}
       items={GENDERS}
       itemRenderer={genderRender}
+      inputProps={{ required }}
       {...otherProps}
     >
       <Button
@@ -35,7 +36,8 @@ const GenderSelect = ({ gender, ...otherProps }) => {
 };
 
 GenderSelect.propTypes = {
-  gender: PropTypes.string
+  gender: PropTypes.string,
+  required: PropTypes.bool
 };
 
 export default GenderSelect;

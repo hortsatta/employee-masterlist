@@ -1,8 +1,10 @@
 /* eslint-disable react/no-array-index-key */
 import React, { Suspense } from 'react';
 import { Switch } from 'react-router-dom';
+import { Intent } from '@blueprintjs/core';
 
 import { menuLinks } from 'config/system.config';
+import { LoadingBar } from 'common/components';
 import { SignInDialog } from 'features/auth/containers';
 import RootRoutes from '../../root-routes';
 import {
@@ -53,7 +55,7 @@ const RootPage = () => {
       </SideNavbar>
       <MainSection>
         <Switch>
-          <Suspense fallback={<div>...Loading</div>}>
+          <Suspense fallback={<LoadingBar intent={Intent.NONE} />}>
             <RootRoutes />
           </Suspense>
         </Switch>

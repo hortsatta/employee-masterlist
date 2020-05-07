@@ -4,6 +4,7 @@ import { IconNames } from '@blueprintjs/icons';
 
 import './upsert-employee.styles.scss';
 import { usePrevious } from 'common/custom-hooks';
+import { WithDelay } from 'common/containers';
 import { PersonalInfoForm, EmployeeInfoForm } from '../../components';
 
 const UpsertEmployeePage = () => {
@@ -74,8 +75,13 @@ const UpsertEmployeePage = () => {
     });
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('personalInfoFields', personalInfoFields);
+  };
+
   return (
-    <div className='upsert-employee'>
+    <form className='upsert-employee' onSubmit={handleSubmit}>
       <Callout>
         <H4 className='title'>Personal Info</H4>
         <PersonalInfoForm
@@ -108,7 +114,8 @@ const UpsertEmployeePage = () => {
             />
             <Divider />
             <Button
-              type='button'
+              large
+              type='submit'
               text='Add Employee'
               intent={Intent.SUCCESS}
               icon={IconNames.ADD}
@@ -116,8 +123,8 @@ const UpsertEmployeePage = () => {
           </ButtonGroup>
         </FormGroup>
       </Callout>
-    </div>
+    </form>
   );
 };
 
-export default UpsertEmployeePage;
+export default WithDelay(UpsertEmployeePage);
