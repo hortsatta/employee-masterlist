@@ -8,7 +8,7 @@ export default (WrappedComponent) => (props) => {
 
   useEffect(() => {
     setIsLoading(true);
-    const delay = setTimeout(() => setIsLoading(false), 500);
+    const delay = setTimeout(() => setIsLoading(false), 300);
     return () => clearTimeout(delay);
   }, []);
 
