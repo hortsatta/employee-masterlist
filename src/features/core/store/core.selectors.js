@@ -17,8 +17,14 @@ const selectCurrentErrorMessage = createSelector(
   (coreState) => coreState.error
 );
 
+const selectCurrentSuccessMessage = createSelector(
+  [selectCoreState],
+  (coreState) => coreState.success
+);
+
 export {
   selectExpandSideNav,
   selectDarkMode,
-  selectCurrentErrorMessage
+  selectCurrentErrorMessage,
+  selectCurrentSuccessMessage
 };

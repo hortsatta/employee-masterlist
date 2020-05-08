@@ -3,6 +3,7 @@ import { CoreActionTypes } from './core.actions';
 const INITIAL_STATE = {
   expandSideNav: false,
   error: null,
+  success: null,
   darkMode: false
 };
 
@@ -22,6 +23,11 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         error: action.payload
+      };
+    case CoreActionTypes.SET_NOTIFICATION_SUCCESS:
+      return {
+        ...state,
+        success: action.payload
       };
     default:
       return state;
