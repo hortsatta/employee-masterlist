@@ -12,48 +12,68 @@ const HistoryButton = (props) => (
   <IconButton content='View History' icon={IconNames.HISTORY} {...props} />
 );
 
-const EmployeeInfoForm = ({ fields, onChange }) => {
+const EmployeeInfoForm = ({
+  fields,
+  errors,
+  touched,
+  handleCustomChange,
+  handleBlur,
+  disabled
+}) => {
   const { department, jobTitle, hireDate, salary } = fields;
   return (
     <div className='employee-info'>
       <FormGroup>
         <div className='row-2'>
           <MomentDateInput
+            className={`input-field ${errors?.hireDate && touched?.hireDate ? 'error' : ''}`}
+            name='hireDate'
             placeholder='Hire Date'
-            onChange={(e) => onChange({ target: { value: e, name: 'hireDate' } })}
+            onChange={(e) => handleCustomChange({ target: { value: e, name: 'hireDate' } })}
             locale='en'
             value={hireDate}
+            onBlur={handleBlur}
             fill
+            disabled={disabled}
           />
           <ControlGroup fill>
             <DepartmentSelect
-              className='department-select'
+              className={`input-field ${errors?.department && touched?.department ? 'error' : ''}`}
+              name='department'
               department={department}
-              onItemSelect={(e) => onChange({ target: { value: e, name: 'department' } })}
+              onItemSelect={(e) => handleCustomChange({ target: { value: e, name: 'department' } })}
+              disabled={disabled}
             />
-            <HistoryButton />
+            <HistoryButton disabled={disabled} />
           </ControlGroup>
         </div>
         <div className='row-2'>
           <ControlGroup fill>
             <NumericInput
+              className={`input-field ${errors?.salary && touched?.salary ? 'error' : ''}`}
+              name='salary'
               placeholder='Salary'
               fill
               allowNumericCharactersOnly
               leftIcon={IconNames.DOLLAR}
               min={0}
-              onValueChange={(e) => (!e && onChange({ target: { value: e, name: 'salary' } }))}
+              onValueChange={(e) => (e && handleCustomChange({ target: { value: e, name: 'salary' } }))}
+              onBlur={handleBlur}
+              disabled={disabled}
               {...(salary ? { value: salary } : {})}
             />
-            <HistoryButton />
+            <HistoryButton disabled={disabled} />
           </ControlGroup>
           <ControlGroup fill>
             <JobTitleSelect
+              className={`input-field ${errors?.jobTitle && touched?.jobTitle ? 'error' : ''}`}
+              name='jobTitle'
               jobTitle={jobTitle}
               department={department}
-              onItemSelect={(e) => onChange({ target: { value: e, name: 'jobTitle' } })}
+              onItemSelect={(e) => handleCustomChange({ target: { value: e, name: 'jobTitle' } })}
+              disabled={disabled}
             />
-            <HistoryButton />
+            <HistoryButton disabled={disabled} />
           </ControlGroup>
         </div>
       </FormGroup>
@@ -68,7 +88,11 @@ EmployeeInfoForm.propTypes = {
     hireDate: PropTypes.instanceOf(Date),
     salary: PropTypes.number
   }).isRequired,
-  onChange: PropTypes.func.isRequired
+  errors: PropTypes.shape(),
+  touched: PropTypes.shape(),
+  handleCustomChange: PropTypes.func.isRequired,
+  handleBlur: PropTypes.func.isRequired,
+  disabled: PropTypes.bool
 };
 
 export default EmployeeInfoForm;

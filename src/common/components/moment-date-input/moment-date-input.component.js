@@ -15,12 +15,11 @@ const calendarButton = (
   <IconButton minimal content='Select Date' icon={IconNames.CALENDAR} />
 );
 
-const MomentDateInput = ({ required, ...otherProps }) => (
+const MomentDateInput = (props) => (
   <DateInput
     rightElement={calendarButton}
-    inputProps={{ required }}
     {...getMomentFormatter('MM/DD/YYYY')}
-    {...otherProps}
+    {...props}
   />
 );
 

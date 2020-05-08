@@ -12,21 +12,25 @@
     }
 
     .bp3-control-group {
-      .bp3-popover-wrapper .bp3-popover-target {
-        display: flex;
+      .bp3-popover-wrapper {
+        height: 30px;
 
-        > div {
-          width: 100%;
-        }
-
-        button.bp3-button.bp3-fill {
-          justify-content: left;
-
-          span.bp3-button-text {
-            flex: 1;
+        .bp3-popover-target {
+          display: flex;
+  
+          > div {
+            width: 100%;
+          }
+  
+          button.bp3-button.bp3-fill {
+            justify-content: left;
+  
+            span.bp3-button-text {
+              flex: 1;
+            }
           }
         }
-      }
+      } 
 
       .icon-button {
         flex: 0;

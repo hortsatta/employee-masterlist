@@ -1,102 +1,139 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { Button, Callout, H4, Intent, FormGroup, ButtonGroup, Divider } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 import './upsert-employee.styles.scss';
 import { usePrevious } from 'common/custom-hooks';
-import { WithDelay } from 'common/containers';
-import { PersonalInfoForm, EmployeeInfoForm } from '../../components';
+import { WithDelay, WithProcessing } from 'common/containers';
+import { setNotificationError, setNotificationSuccess } from 'features/core/store';
+import { createEmployeeDocument } from '../../employee.service';
+import { EmployeeInfoForm, PersonalInfoForm } from '../../components';
 
-const UpsertEmployeePage = () => {
-  const [personalInfoFields, setPersonalInfoFields] = useState({
-    firstName: '',
-    lastName: '',
-    middleInitial: '',
-    gender: '',
-    birthDate: null,
-    currentAddress: '',
-    homeAddress: '',
-    phones: [''],
-    emails: ['']
+const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [reset, setReset] = useState(false);
+
+  const formik = useFormik({
+    // Form fields validation using Yup
+    validationSchema: Yup.object().shape({
+      firstName: Yup.string().min(2).required(),
+      lastName: Yup.string().min(2).required(),
+      middleInitial: Yup.string().max(1).required(),
+      gender: Yup.string().required(),
+      birthDate: Yup.date().required(),
+      currentAddress: Yup.string().min(2).required(),
+      homeAddress: Yup.string().required(),
+      phones: Yup.array().of(Yup.string().required()).required(),
+      emails: Yup.array().of(Yup.string().email().required()).required(),
+      department: Yup.object().required(),
+      jobTitle: Yup.object().required(),
+      hireDate: Yup.date().required(),
+      salary: Yup.number().required()
+    }),
+    initialValues: {
+      // Personal info form
+      firstName: '',
+      lastName: '',
+      middleInitial: '',
+      gender: '',
+      birthDate: null,
+      currentAddress: '',
+      homeAddress: '',
+      phones: [''],
+      emails: [''],
+      // Employee info form
+      department: null,
+      jobTitle: null,
+      hireDate: null,
+      salary: null
+    },
+    onReset: () => {
+      setReset(false);
+      const resetTimeout = setTimeout(() => {
+        setReset(true);
+        clearTimeout(resetTimeout);
+      }, 0);
+    },
+    // Submit function, only fires when all form values are valid
+    onSubmit: async (values) => {
+      doProcess();
+      setIsLoading(true);
+
+      try {
+        await createEmployeeDocument(values);
+        setIsLoading(false);
+        dispatch(setNotificationSuccess(`Employee ${values.firstName} successfully enrolled.`));
+      } catch (errorMessage) {
+        setIsLoading(false);
+        dispatch(setNotificationError(errorMessage));
+      }
+    }
   });
 
-  const [employeeInfoFields, setEmployeeInfoFields] = useState({
-    department: null,
-    jobTitle: null,
-    hireDate: null,
-    salary: null
-  });
-
-  const { firstName, lastName, middleInitial, gender, phones, emails } = personalInfoFields;
-  const { department, jobTitle, hireDate, salary } = employeeInfoFields;
+  const { values: { department }, setFieldValue } = formik;
   // Used to store previous department value for checking select component
   const prevDepartment = usePrevious(department);
 
   // If selected department has changed in select component then set jobTitle to null
   useEffect(() => {
-    if (!prevDepartment) return;
+    if (!prevDepartment || !department) return;
     if (prevDepartment.id === department.id) return;
-    setEmployeeInfoFields((prev) => ({ ...prev, jobTitle: null }));
-  }, [prevDepartment, department, jobTitle]);
+    setFieldValue('jobTitle', null, false);
+  }, [prevDepartment, department, setFieldValue]);
 
   // Add new field to Input Groups component
   const addInputGroupsEl = (fieldName) => {
-    setPersonalInfoFields((prev) => ({ ...prev, [fieldName]: [...prev[fieldName], ['']] }));
+    setFieldValue(fieldName, [...formik.values[fieldName], '']);
   };
 
   // Remove a specific field from Input Groups component
   const removeInputGroupsEl = (i, fieldName) => {
-    setPersonalInfoFields((prev) => ({
-      ...prev,
-      [fieldName]: prev[fieldName].filter((_, idx) => idx !== i)
-    }));
+    setFieldValue(fieldName, formik.values[fieldName].filter((_, idx) => idx !== i));
   };
 
-  const handlePersonalInfoChange = (e) => {
+  // Use if formik handleChange function fails
+  const handleCustomChange = (e) => {
     const { name, value } = e.target;
-    setPersonalInfoFields((prev) => ({
-      ...prev, [name]: value
-    }));
-  };
-
-  const handleEmployeeInfoChange = (e) => {
-    const { name, value } = e.target;
-    setEmployeeInfoFields((prev) => ({
-      ...prev, [name]: value
-    }));
+    setFieldValue(name, value, true);
   };
 
   // Handle value change in Input Groups fields
   const handleInputGroupsChange = (e, i, fieldName) => {
-    setPersonalInfoFields((prev) => {
-      const list = [...prev[fieldName]];
-      list[i] = e.target.value;
-      return { ...prev, [fieldName]: [...list] };
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('personalInfoFields', personalInfoFields);
+    const list = formik.values[fieldName];
+    list[i] = e.target.value;
+    setFieldValue(fieldName, [...list]);
   };
 
   return (
-    <form className='upsert-employee' onSubmit={handleSubmit}>
+    <form className={`upsert-employee ${reset ? 'headShake' : ''}`} onSubmit={formik.handleSubmit}>
       <Callout>
         <H4 className='title'>Personal Info</H4>
         <PersonalInfoForm
-          fields={personalInfoFields}
-          onChange={handlePersonalInfoChange}
+          fields={formik.values}
+          errors={formik.errors}
+          touched={formik.touched}
+          handleBlur={formik.handleBlur}
+          handleChange={formik.handleChange}
+          handleCustomChange={handleCustomChange}
           onInputGroupsChange={handleInputGroupsChange}
           onAddInputGroupsEl={addInputGroupsEl}
           onRemoveInputGroupsEl={removeInputGroupsEl}
+          disabled={isProcessing || isLoading}
         />
       </Callout>
       <Callout>
         <H4 className='title'>Employee Info</H4>
         <EmployeeInfoForm
-          fields={employeeInfoFields}
-          onChange={handleEmployeeInfoChange}
+          fields={formik.values}
+          errors={formik.errors}
+          touched={formik.touched}
+          handleBlur={formik.handleBlur}
+          handleCustomChange={handleCustomChange}
+          disabled={isProcessing || isLoading}
         />
       </Callout>
       <Callout className='controls'>
@@ -106,6 +143,7 @@ const UpsertEmployeePage = () => {
             type='button'
             text='Reset Fields'
             icon={IconNames.RESET}
+            onClick={formik.resetForm}
           />
           <ButtonGroup minimal>
             <Button
@@ -119,6 +157,7 @@ const UpsertEmployeePage = () => {
               text='Add Employee'
               intent={Intent.SUCCESS}
               icon={IconNames.ADD}
+              loading={isProcessing || isLoading}
             />
           </ButtonGroup>
         </FormGroup>
@@ -127,4 +166,8 @@ const UpsertEmployeePage = () => {
   );
 };
 
-export default WithDelay(UpsertEmployeePage);
+export default compose(
+  connect(),
+  WithDelay,
+  WithProcessing
+)(UpsertEmployeePage);

@@ -3,9 +3,10 @@ import { InputGroup, ControlGroup, Button } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
 
+import './input-groups.styles.scss';
 import { IconButton } from 'common/components';
 
-const InputGroups = ({ items, onChange, onAddEl, onRemoveEl, name, fieldName, ...otherProps }) => {
+const InputGroups = ({ items, onChange, onAddEl, onRemoveEl, name, fieldName, disabled, ...otherProps }) => {
   const RemoveButton = (i) => (
     <IconButton
       minimal
@@ -17,8 +18,9 @@ const InputGroups = ({ items, onChange, onAddEl, onRemoveEl, name, fieldName, ..
 
   return (
     <ControlGroup
-      vertical
       className={`input-groups ${name}-group`}
+      vertical
+      disabled={disabled}
     >
       {
         items.map((item, i) => (
@@ -30,6 +32,7 @@ const InputGroups = ({ items, onChange, onAddEl, onRemoveEl, name, fieldName, ..
             rightElement={items.length > 1 ? RemoveButton(i) : null}
             value={item}
             onChange={(e) => onChange(e, i, fieldName)}
+            disabled={disabled}
             {...otherProps}
           />
         ))
@@ -38,6 +41,7 @@ const InputGroups = ({ items, onChange, onAddEl, onRemoveEl, name, fieldName, ..
         fill
         type='button'
         icon={IconNames.PLUS}
+        disabled={disabled}
         onClick={() => onAddEl(fieldName)}
       />
     </ControlGroup>
