@@ -7,7 +7,7 @@ export default (WrappedComponent) => (props) => {
     setIsProcessing(true);
     const delay = setTimeout(() => {
       setIsProcessing(false);
-      clearInterval(delay);
+      clearTimeout(delay);
     }, 500);
   };
 
