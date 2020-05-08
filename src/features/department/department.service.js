@@ -7,7 +7,6 @@ const getAllDepartments = async (isActive = true) => {
       .where('isActive', '==', isActive)
       .orderBy('name')
       .get();
-
     return snapshots.docs.map((snapshot) => ({ ...snapshot.data(), id: snapshot.id }));
   } catch (error) {
     throw error.message;
