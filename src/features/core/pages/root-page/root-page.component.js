@@ -8,11 +8,12 @@ import { LoadingBar } from 'common/components';
 import { SignInDialog } from 'features/auth/containers';
 import RootRoutes from '../../root-routes';
 import {
-  SideNavbar,
+  Header,
   NavGroup,
   NavItem,
+  NotificationPopup,
   MainSection,
-  NotificationPopup
+  SideNavbar
 } from '../../components';
 
 // const tempFunc = async () => {
@@ -53,6 +54,7 @@ const RootPage = () => {
       <SideNavbar>
         {navItems}
       </SideNavbar>
+      <Header />
       <MainSection>
         <Switch>
           <Suspense fallback={<LoadingBar intent={Intent.NONE} />}>

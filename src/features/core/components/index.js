@@ -1,3 +1,4 @@
+export { default as Header } from './header/header.component';
 export { default as NavGroup } from './nav-group/nav-group.component';
 export { default as NavItem } from './nav-item/nav-item.component';
 export { default as NotificationPopup } from './notification-popup/notification.component';

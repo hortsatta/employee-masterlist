@@ -1,18 +1,18 @@
 import { IconNames } from '@blueprintjs/icons';
 
-const roles = {
+const ROLES = {
   administrator: { id: 2, name: 'Administrator' },
   regular: { id: 1, name: 'Regular' },
   guest: { id: 0, name: 'Guest' }
 };
 
-const links = {
+const LINKS = {
   employees: {
     icon: IconNames.PEOPLE,
     text: 'Employees',
     to: '/employees',
     roles: [
-      roles.administrator
+      ROLES.administrator
     ],
     children: {
       newEmployee: {
@@ -34,13 +34,28 @@ const links = {
     text: 'Options',
     to: '/options',
     roles: [
-      roles.administrator,
-      roles.regular,
-      roles.guest
+      ROLES.administrator,
+      ROLES.regular,
+      ROLES.guest
     ]
   }
 };
 
-const menuLinks = Object.values(links);
+const PAGE_TITLES = {
+  app: { path: '/', title: 'Employee Masterlist' },
+  options: {
+    path: '/options',
+    title: 'Options',
+    subtitle: 'Modify application settings.'
+  },
+  addEmployee: {
+    path: '/employees/new',
+    title: 'New Employee',
+    subtitle: 'Add an employee by using the form below.'
+  },
+  employeeList: { path: '/employees', title: 'Employees' }
+};
 
-export { roles, links, menuLinks };
+const menuLinks = Object.values(LINKS);
+
+export { ROLES, LINKS, PAGE_TITLES, menuLinks };

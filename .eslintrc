@@ -5,7 +5,7 @@
   ],
   "rules": {
     "comma-dangle": ["error", "never"],
-    "no-unused-expressions": ["error", { "allowShortCircuit": true }],
+    "no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTernary": true }],
     "object-curly-newline": 0,
     "func-names": ["error", "always", { "generators": "never" }],
     "jsx-quotes": ["error", "prefer-single"],

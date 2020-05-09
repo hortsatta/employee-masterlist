@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import PropTypes from 'prop-types';
 
-import styles from 'common/styles/styles.scss';
 import './main-section.styles.scss';
+import styles from 'common/styles/styles.scss';
 import { selectExpandSideNav, selectDarkMode } from '../../store';
 
 const MainSection = ({ expandSideNav, darkMode, children }) => {

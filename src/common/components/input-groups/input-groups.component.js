@@ -6,7 +6,16 @@ import PropTypes from 'prop-types';
 import './input-groups.styles.scss';
 import { IconButton } from 'common/components';
 
-const InputGroups = ({ items, onChange, onAddEl, onRemoveEl, name, fieldName, disabled, ...otherProps }) => {
+const InputGroups = ({
+  items,
+  onChange,
+  onAddEl,
+  onRemoveEl,
+  name,
+  fieldName,
+  disabled,
+  ...otherProps
+}) => {
   const RemoveButton = (i) => (
     <IconButton
       minimal
@@ -54,7 +63,8 @@ InputGroups.propTypes = {
   fieldName: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onAddEl: PropTypes.func.isRequired,
-  onRemoveEl: PropTypes.func.isRequired
+  onRemoveEl: PropTypes.func.isRequired,
+  disabled: PropTypes.bool
 };
 
 export default InputGroups;

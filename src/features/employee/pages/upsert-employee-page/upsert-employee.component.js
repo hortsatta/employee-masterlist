@@ -5,6 +5,7 @@ import { Button, Callout, H4, Intent, FormGroup, ButtonGroup, Divider } from '@b
 import { IconNames } from '@blueprintjs/icons';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import PropTypes from 'prop-types';
 
 import './upsert-employee.styles.scss';
 import { usePrevious } from 'common/custom-hooks';
@@ -13,7 +14,7 @@ import { setNotificationError, setNotificationSuccess } from 'features/core/stor
 import { createEmployeeDocument } from '../../employee.service';
 import { EmployeeInfoForm, PersonalInfoForm } from '../../components';
 
-const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess }) => {
+const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess, isUpdate = false }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [reset, setReset] = useState(false);
 
@@ -32,7 +33,9 @@ const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess }) => {
       department: Yup.object().required(),
       jobTitle: Yup.object().required(),
       hireDate: Yup.date().required(),
-      salary: Yup.number().required()
+      salary: Yup.number().required(),
+      picture: Yup.object(),
+      imageURL: Yup.string().url()
     }),
     initialValues: {
       // Personal info form
@@ -49,7 +52,9 @@ const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess }) => {
       department: null,
       jobTitle: null,
       hireDate: null,
-      salary: null
+      salary: null,
+      picture: null,
+      imageURL: ''
     },
     onReset: () => {
       setReset(false);
@@ -128,6 +133,7 @@ const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess }) => {
       <Callout>
         <H4 className='title'>Employee Info</H4>
         <EmployeeInfoForm
+          isUpdate={isUpdate}
           fields={formik.values}
           errors={formik.errors}
           touched={formik.touched}
@@ -164,6 +170,13 @@ const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess }) => {
       </Callout>
     </form>
   );
+};
+
+UpsertEmployeePage.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  isProcessing: PropTypes.bool,
+  doProcess: PropTypes.func.isRequired,
+  isUpdate: PropTypes.bool
 };
 
 export default compose(

@@ -13,6 +13,7 @@ const HistoryButton = (props) => (
 );
 
 const EmployeeInfoForm = ({
+  isUpdate,
   fields,
   errors,
   touched,
@@ -44,7 +45,7 @@ const EmployeeInfoForm = ({
               onItemSelect={(e) => handleCustomChange({ target: { value: e, name: 'department' } })}
               disabled={disabled}
             />
-            <HistoryButton disabled={disabled} />
+            {isUpdate && <HistoryButton disabled={disabled} />} 
           </ControlGroup>
         </div>
         <div className='row-2'>
@@ -62,7 +63,7 @@ const EmployeeInfoForm = ({
               disabled={disabled}
               {...(salary ? { value: salary } : {})}
             />
-            <HistoryButton disabled={disabled} />
+            {isUpdate && <HistoryButton disabled={disabled} />} 
           </ControlGroup>
           <ControlGroup fill>
             <JobTitleSelect
@@ -73,7 +74,7 @@ const EmployeeInfoForm = ({
               onItemSelect={(e) => handleCustomChange({ target: { value: e, name: 'jobTitle' } })}
               disabled={disabled}
             />
-            <HistoryButton disabled={disabled} />
+            {isUpdate && <HistoryButton disabled={disabled} />} 
           </ControlGroup>
         </div>
       </FormGroup>
@@ -82,6 +83,7 @@ const EmployeeInfoForm = ({
 };
 
 EmployeeInfoForm.propTypes = {
+  isUpdate: PropTypes.bool.isRequired,
   fields: PropTypes.shape({
     department: PropTypes.shape(),
     jobTitle: PropTypes.shape(),

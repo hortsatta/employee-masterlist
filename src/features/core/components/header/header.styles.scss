@@ -1,0 +1,24 @@
+@import "src/common/styles/styles.scss";
+
+header.main-header {
+  position: fixed;
+  top:0;
+  left: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-right: 1rem;
+  width: 100%;
+  transition: 0.2s padding ease;
+
+  &.bp3-dark { background-color: $darkColorBg; }
+
+  .page-title {
+    padding-left: 2rem;
+
+    h1.bp3-heading {
+      margin: 0;
+      font-family: 'Poiret One', cursive;
+      font-size: 28px;
+    }
+  }
+}

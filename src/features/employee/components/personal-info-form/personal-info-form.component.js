@@ -1,11 +1,15 @@
-import React from 'react';
-import { FormGroup, ControlGroup, InputGroup, Divider } from '@blueprintjs/core';
+import React, { useState, useRef, useCallback } from 'react';
+import { Spinner, Button, FormGroup, FileInput, ControlGroup, InputGroup, Divider, Icon } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
+import Jimp from 'jimp';
+import dotProp from 'dot-prop';
 import PropTypes from 'prop-types';
 
 import './personal-info-form.styles.scss';
+import employeePlaceholder from 'assets/employee-placeholder.png';
 import { MomentDateInput, InputGroups } from 'common/components';
 import GenderSelect from '../gender-select/gender-select.component';
+
 
 const PersonalInfoForm = ({
   fields,
@@ -19,6 +23,9 @@ const PersonalInfoForm = ({
   onRemoveInputGroupsEl,
   disabled
 }) => {
+  const fileInputEl = useRef(null);
+  const [isFetchingImage, setIsFetchingImage] = useState(false);
+
   const {
     firstName,
     lastName,
@@ -28,12 +35,113 @@ const PersonalInfoForm = ({
     birthDate,
     gender,
     phones,
-    emails
+    emails,
+    picture,
+    imageURL
   } = fields;
+
+  const generateJimp = async (fileURL) => {
+    const size = 360;
+    // Convert to jimp, and set desired jimp settings to image,
+    // get image base64, and return it in jimp object
+    const jimp = await Jimp.read(fileURL);
+    const value = jimp.bitmap.width >= jimp.bitmap.height
+      ? jimp.cover(size, size).quality(75) // set JPEG quality
+      : jimp.resize(size, Jimp.AUTO).crop(0, 0, size, size).quality(75);
+    const base64 = await value.getBase64Async(Jimp.MIME_JPEG);
+    return { ...value, base64 };
+  };
+
+  // For file input image select
+  const handleInputChange = useCallback(async (e) => { 
+    try {
+      setIsFetchingImage(true);
+      const file = e.target.files[0];
+      // Generate image url from selected file
+      const fileURL = URL.createObjectURL(file);
+      const value = await generateJimp(fileURL);
+      const picture = {
+        target: {
+          name: 'picture',
+          value: { ...value, filename: file.name }
+        }
+      };
+      handleCustomChange(picture);
+    } catch (error) {
+      handleCustomChange({ target: { name: 'picture', value: null } });
+    } finally {
+      setIsFetchingImage(false);
+      // Clear value to enable same file selection,
+      // useful if current selection has been remove via img tag click
+      fileInputEl.current.value = '';
+    }
+   
+  }, [handleCustomChange]);
+
+  // For fetching image URL via 'fetch' button
+  const handleURLClick = async () => {
+    if (!imageURL) { return; }
+    try {
+      setIsFetchingImage(true);
+      const value = await generateJimp(imageURL);
+      const picture = {
+        target: {
+          name: 'picture',
+          value: { ...value }
+        }
+      }
+      handleCustomChange(picture);
+    } catch (error) { }
+    finally { setIsFetchingImage(false); }
+  };
 
   return (
     <div className='personal-info'>
       <FormGroup>
+        <div className='employee-picture-wrapper'>
+          <div className='employee-picture'>
+            <div className={`status ${isFetchingImage ? 'show' : ''}`}>
+              {
+                isFetchingImage
+                  ? (<Spinner size={Spinner.SIZE_LARGE} />)
+                  : (picture
+                    ? <Icon type='button' icon={IconNames.CROSS} iconSize={100} onClick={() => { handleCustomChange({ target: { name: 'picture', value: null } }); }} />
+                    : <Icon type='button' icon={IconNames.IMPORT} iconSize={100} onClick={() => { fileInputEl.current.click() }} />
+                  )
+              }
+            </div>
+            <img src={picture ? picture.base64 : employeePlaceholder} alt='employee' />
+          </div>
+          <div className='picture-controls'>
+            <InputGroup
+              fill
+              name='imageURL'
+              type='text'
+              placeholder='Paste image URL here...'
+              value={imageURL}
+              onChange={handleChange}
+              disabled={disabled || isFetchingImage}
+              rightElement={
+                <Button
+                  className='image-url-button'
+                  disabled={disabled || isFetchingImage}
+                  type='button'
+                  text='Obtain'
+                  onClick={handleURLClick}
+                />
+              }
+            />
+            <small>or</small>
+            <FileInput
+              fill
+              disabled={disabled || isFetchingImage}
+              text={dotProp.get(picture, 'filename', 'Select image...')}
+              inputProps={{ ref: fileInputEl, accept: 'image/*' }}
+              onInputChange={handleInputChange}
+            />
+          </div>
+        </div>
+        <Divider />
         <ControlGroup fill>
           <InputGroup
             className={`input-field ${errors?.firstName && touched?.firstName ? 'error' : ''}`}
