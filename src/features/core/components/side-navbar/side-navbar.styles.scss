@@ -1,4 +1,7 @@
 .side-navbar-wrapper {
+  position: relative;
+  z-index: 11;
+
   .bp3-overlay {
     right: auto;
 

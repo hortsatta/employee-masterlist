@@ -9,6 +9,7 @@ header.main-header {
   padding-right: 1rem;
   width: 100%;
   transition: 0.2s padding ease;
+  z-index: 10;
 
   &.bp3-dark { background-color: $darkColorBg; }
 
