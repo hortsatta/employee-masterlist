@@ -18,7 +18,7 @@ const createUserDocument = async (user, moreData) => {
 
     try {
       // Instantiate objects to be added to db
-      const newUser = { employeeId, email };
+      const newUser = { employeeId, email, isActive: true };
       const newUserRole = { userRoleId, dateFrom: fieldValue.serverTimestamp() };
       // Add user and user role to batch and then commit
       batch.set(userDocRef, newUser);
