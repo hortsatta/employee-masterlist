@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { Button, Callout, H4, Intent, FormGroup, ButtonGroup, Divider } from '@blueprintjs/core';
+import { Button, Callout, H4, H5, Intent, FormGroup, ButtonGroup, Divider, Popover } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -14,9 +14,32 @@ import { setNotificationError, setNotificationSuccess } from 'features/core/stor
 import { createEmployeeDocument } from '../../employee.service';
 import { EmployeeInfoForm, PersonalInfoForm } from '../../components';
 
+const PopoverConfirm = ({ handleCancel, handleSubmit }) => (
+  <div className='popover popover-confirm'>
+    <H5>Confirm employee creation</H5>
+    <div className='popover-content'>
+      <p>
+        Employee doesn&apos;t have a picture.
+        <br />
+        Continue anyway?
+      </p>
+    </div>
+    <div className='controls'>
+      <Button type='button' text='Cancel' onClick={handleCancel} />
+      <Button
+        type='button'
+        text='Yes'
+        intent={Intent.SUCCESS}
+        onClick={handleSubmit}
+      />
+    </div>
+  </div>
+);
+
 const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess, isUpdate = false }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [reset, setReset] = useState(false);
+  const [showPopover, setShowPopover] = useState(false);
+  const [resetAnimation, setResetAnimation] = useState('');
 
   const formik = useFormik({
     // Form fields validation using Yup
@@ -34,7 +57,7 @@ const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess, isUpdate = fals
       jobTitle: Yup.object().required(),
       hireDate: Yup.date().required(),
       salary: Yup.number().required(),
-      picture: Yup.object(),
+      picture: Yup.string().nullable(),
       imageURL: Yup.string().url()
     }),
     initialValues: {
@@ -57,15 +80,21 @@ const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess, isUpdate = fals
       imageURL: ''
     },
     onReset: () => {
-      setReset(false);
+      setResetAnimation('');
       const resetTimeout = setTimeout(() => {
-        setReset(true);
+        setResetAnimation('headShake');
         clearTimeout(resetTimeout);
       }, 0);
     },
     // Submit function, only fires when all form values are valid
     onSubmit: async (values) => {
+      if (!values.picture && !showPopover) {
+        setShowPopover(true);
+        return;
+      }
+
       doProcess();
+      setShowPopover(false);
       setIsLoading(true);
 
       try {
@@ -114,7 +143,7 @@ const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess, isUpdate = fals
   };
 
   return (
-    <form className={`upsert-employee ${reset ? 'headShake' : ''}`} onSubmit={formik.handleSubmit}>
+    <form className={`upsert-employee ${resetAnimation}`} onSubmit={formik.handleSubmit}>
       <Callout>
         <H4 className='title'>Personal Info</H4>
         <PersonalInfoForm
@@ -152,19 +181,26 @@ const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess, isUpdate = fals
             onClick={formik.resetForm}
           />
           <ButtonGroup minimal>
-            <Button
-              text='Cancel'
-              type='button'
-            />
+            <Button type='button' text='Back' />
             <Divider />
-            <Button
-              large
-              type='submit'
-              text='Add Employee'
-              intent={Intent.SUCCESS}
-              icon={IconNames.ADD}
-              loading={isProcessing || isLoading}
-            />
+            <Popover
+              hasBackdrop
+              isOpen={showPopover}
+              onInteraction={(state) => !state && setShowPopover(state)}
+            >
+              <Button
+                large
+                type='submit'
+                text='Add Employee'
+                intent={Intent.SUCCESS}
+                icon={IconNames.ADD}
+                loading={isProcessing || isLoading}
+              />
+              <PopoverConfirm
+                handleCancel={() => setShowPopover(false)}
+                handleSubmit={() => formik.handleSubmit()}
+              />
+            </Popover>
           </ButtonGroup>
         </FormGroup>
       </Callout>
