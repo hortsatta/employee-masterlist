@@ -46,7 +46,7 @@ const PersonalInfoForm = ({
     // get image base64, and return it in jimp object
     const jimp = await Jimp.read(fileURL);
     const value = jimp.bitmap.width >= jimp.bitmap.height
-      ? jimp.cover(size, size).quality(75) // set JPEG quality
+      ? jimp.cover(size, size).quality(75)
       : jimp.resize(size, Jimp.AUTO).crop(0, 0, size, size).quality(75);
     const base64 = await value.getBase64Async(Jimp.MIME_JPEG);
     return { ...value, base64 };
@@ -177,7 +177,7 @@ const PersonalInfoForm = ({
             disabled={disabled}
           />
           <MomentDateInput
-            className={`${errors?.birthDate && touched?.birthDate ? 'error' : ''}`}
+            className={`input-field ${errors?.birthDate && touched?.birthDate ? 'error' : ''}`}
             name='birthDate'
             placeholder='Date of Birth'
             onChange={(e) => handleCustomChange({ target: { value: e, name: 'birthDate' } })}

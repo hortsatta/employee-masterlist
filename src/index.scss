@@ -34,11 +34,39 @@ body {
   }
 
   .input-field {
-    margin-bottom: 0.5rem;
     width: 100%;
+
+    &:not(.bp3-datepicker) {
+      margin-bottom: 0.5rem;
+    }
 
     &.error {
       outline: 1px solid #A82A2A;
+    }
+  }
+
+  .popover {
+    padding: 20px;
+
+    h5 {
+      font-weight: 500;
+    }
+
+    .popover-content {
+      padding: 0.5rem 0 1rem 0;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: flex-end;
+      
+      .bp3-button {
+        min-width: 70px;
+
+        &:first-of-type {
+          margin-right: 0.5rem
+        }
+      }
     }
   }
 

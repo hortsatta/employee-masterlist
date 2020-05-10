@@ -27,7 +27,7 @@ const EmployeeInfoForm = ({
       <FormGroup>
         <div className='row-2'>
           <MomentDateInput
-            className={`${errors?.hireDate && touched?.hireDate ? 'error' : ''}`}
+            className={`input-field ${errors?.hireDate && touched?.hireDate ? 'error' : ''}`}
             name='hireDate'
             placeholder='Hire Date'
             onChange={(e) => handleCustomChange({ target: { value: e, name: 'hireDate' } })}
