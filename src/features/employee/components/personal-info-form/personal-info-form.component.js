@@ -177,7 +177,7 @@ const PersonalInfoForm = ({
             disabled={disabled}
           />
           <MomentDateInput
-            className={`input-field ${errors?.birthDate && touched?.birthDate ? 'error' : ''}`}
+            className={`${errors?.birthDate && touched?.birthDate ? 'error' : ''}`}
             name='birthDate'
             placeholder='Date of Birth'
             onChange={(e) => handleCustomChange({ target: { value: e, name: 'birthDate' } })}
