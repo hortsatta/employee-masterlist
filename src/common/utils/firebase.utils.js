@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import 'firebase/storage';
 
 // Set firebase config from dotenv
 const config = {
@@ -18,6 +19,7 @@ firebase.initializeApp(config);
 // Declare firebase authentication and database
 const auth = firebase.auth();
 const firestore = firebase.firestore();
+const storage = firebase.storage().ref();
 
 // Batch adding of documents to db
 const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
@@ -57,6 +59,7 @@ export {
   firebase,
   auth,
   firestore,
+  storage,
   addCollectionAndDocuments,
   convertMapToObj,
   convertObjectToMap
