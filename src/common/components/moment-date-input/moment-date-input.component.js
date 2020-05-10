@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { DateInput } from '@blueprintjs/datetime';
 import { IconNames } from '@blueprintjs/icons';
 import moment from 'moment';
@@ -11,17 +11,27 @@ const getMomentFormatter = (format) => ({
   parseDate: (str, locale) => moment(str, format).locale(locale).toDate()
 });
 
-const calendarButton = (
-  <IconButton minimal content='Select Date' icon={IconNames.CALENDAR} />
-);
+const MomentDateInput = (props) => {
+  const dateInputEl = useRef(null);
 
-const MomentDateInput = (props) => (
-  <DateInput
-    rightElement={calendarButton}
-    {...getMomentFormatter('MM/DD/YYYY')}
-    {...props}
-  />
-);
+  const calendarButton = (
+    <IconButton
+      minimal
+      content='Select Date'
+      icon={IconNames.CALENDAR}
+      onClick={() => dateInputEl.current.inputEl.focus()}
+    />
+  );
+
+  return (
+    <DateInput
+      ref={dateInputEl}
+      rightElement={calendarButton}
+      {...getMomentFormatter('MM/DD/YYYY')}
+      {...props}
+    />
+  );
+};
 
 MomentDateInput.propTypes = {
   required: PropTypes.bool
