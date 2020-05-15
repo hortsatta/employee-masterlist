@@ -1,0 +1,32 @@
+.employee-list-table {
+  height: 530px;
+
+  
+  .bp3-table-row-headers-cells-container .bp3-table-header {
+    display: flex;
+    align-items: center;
+
+    .bp3-table-row-name-text {
+      text-align: center;
+    }
+  }
+
+  .bp3-table-cell:not(.bp3-loading) {
+    display: flex;
+    align-items: center;
+
+    &.bp3-table-cell-col-0 {
+      padding: 0 1px 0 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+  
+        &.placeholder {
+          background-color: #fff;
+        }
+      }
+    }
+  }
+}

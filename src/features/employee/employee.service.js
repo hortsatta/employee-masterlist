@@ -1,8 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import Jimp from 'jimp';
+import dotProp from 'dot-prop';
 
-import { firebase, firestore, storage } from 'common/utils';
+import { firebase, firestore, storage, getDateFromTimestamp } from 'common/utils';
+import { PAGE_MODE } from 'config/system.config';
+import { getDepartmentById } from 'features/department/department.service';
+import { getJobTitleById } from 'features/job-title/job-title.service';
+
+const collectionName = 'employees';
 
 const getRawBase64 = (base64) => base64.replace(/^data:image\/[a-z]+;base64,/, '');
 
@@ -53,39 +59,50 @@ const createEmployeeDocument = async (employee) => {
     } = employee;
 
     // Save employee picture to firebase storage and return fullpath
-    const pictureFullPath = await saveEmployeePicture(picture, hireDate);
+    const pictureFullPath = picture ? await saveEmployeePicture(picture, hireDate) : null;
     // Generate new doc and id, for parent employee,
     // Salary subcollection, department subcollection, and title subcollection
-    const employeeDocRef = firestore.collection('employees').doc();
+    const employeeDocRef = firestore.collection(collectionName).doc();
     const salaryDocRef = firestore
-      .collection('employees')
+      .collection(collectionName)
       .doc(employeeDocRef.id)
       .collection('salary')
       .doc();
     const departmentDocRef = firestore
-      .collection('employees')
+      .collection(collectionName)
       .doc(employeeDocRef.id)
       .collection('department')
       .doc();
     const jobTitleDocRef = firestore
-      .collection('employees')
+      .collection(collectionName)
       .doc(employeeDocRef.id)
       .collection('title')
       .doc();
     const newEmployee = {
-      hireDate,
+      isActive: true,
+      hireDate: {
+        date: hireDate,
+        shortDate: moment(hireDate).format('MM-DD')
+      },
       personalInfo: {
         firstName,
         lastName,
         middleInitial,
-        birthDate,
+        birthDate: {
+          date: birthDate,
+          shortDate: moment(birthDate).format('MM-DD')
+        },
         gender,
         currentAddress,
         homeAddress,
         phones,
         emails,
-        picture: pictureFullPath,
-        isActive: true
+        picture: pictureFullPath
+      },
+      // For sorting pagination
+      pageKey: {
+        fullName: `${firstName}_${middleInitial}_${lastName}_${employeeDocRef.id}`,
+        hireDate: `${moment(hireDate).format('YYYY-MM-DD')}_${employeeDocRef.id}`
       }
     };
 
@@ -103,4 +120,117 @@ const createEmployeeDocument = async (employee) => {
   }
 };
 
-export { createEmployeeDocument };
+const getEmployeeSalary = async (employeeId) => {
+  const salaryCollectionName = 'salary'
+  const salarySnapshots = await firestore
+    .collection(collectionName)
+    .doc(employeeId)
+    .collection(salaryCollectionName)
+    .orderBy('createdAt', 'desc')
+    .limit(1)
+    .get();
+
+  return salarySnapshots.docs.map((snapshot) => snapshot.data())[0];
+};
+
+const getEmployeeDepartment = async (employeeId) => {
+  const deptCollectionName = 'department'
+  const departmentSnapshots = await firestore
+    .collection(collectionName)
+    .doc(employeeId)
+    .collection(deptCollectionName)
+    .orderBy('createdAt', 'desc')
+    .limit(1)
+    .get();
+
+  const { departmentId } = departmentSnapshots.docs.map((snapshot) => snapshot.data())[0];
+  return await getDepartmentById(departmentId);
+};
+
+const getEmployeeJobTitle = async (employeeId) => {
+  const jobTitleCollectionName = 'title'
+  const jobTitleSnapshots = await firestore
+    .collection(collectionName)
+    .doc(employeeId)
+    .collection(jobTitleCollectionName)
+    .orderBy('createdAt', 'desc')
+    .limit(1)
+    .get();
+
+  const { titleId } = jobTitleSnapshots.docs.map((snapshot) => snapshot.data())[0];
+  return await getJobTitleById(titleId);
+};
+
+const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => { console.log(isActive, sortBy)
+  const pageSize = 3;
+  const field = dotProp.get(cursor, 'field', 'pageKey.fullName')
+  let snapshots;
+
+  try {
+    switch (cursor?.mode) {
+      case PAGE_MODE.next:
+        snapshots = await firestore
+          .collection(collectionName)
+          .where('isActive', '==', isActive)
+          .orderBy(field, sortBy)
+          .startAfter(cursor.pageKey)
+          .limit(pageSize)
+          .get();
+        break;
+      case PAGE_MODE.previous:
+        snapshots = await firestore
+          .collection(collectionName)
+          .where('isActive', '==', isActive)
+          .orderBy(field, sortBy)
+          .endBefore(cursor.pageKey)
+          .limit(pageSize)
+          .get();
+        break;
+      default:
+        snapshots = await firestore
+          .collection(collectionName)
+          .where('isActive', '==', isActive)
+          .orderBy(field, sortBy)
+          .limit(pageSize)
+          .get();
+        break;
+    }
+
+    const results = await Promise.all(snapshots.docs.map(async (snapshot) => {
+      const data = snapshot.data();
+      const { hireDate, createdAt } = data;
+      const { birthDate, firstName, middleInitial, lastName, picture } = data.personalInfo;
+    
+      const salary = await getEmployeeSalary(snapshot.id);
+      const department = await getEmployeeDepartment(snapshot.id);
+      const jobTitle = await getEmployeeJobTitle(snapshot.id);
+      const thumb = picture ? await storage.child(`${picture}_thumb`).getDownloadURL() : undefined;
+    
+      return ({
+        ...data,
+        id: snapshot.id,
+        personalInfo: {
+          ...data.personalInfo,
+          fullName: `${firstName} ${middleInitial} ${lastName}`,
+          birthDate: { ...birthDate, date: getDateFromTimestamp(birthDate.date).format('MMM DD, YYYY') },
+          thumb
+        },
+        salary,
+        department,
+        jobTitle,
+        hireDate: { ...hireDate, date: getDateFromTimestamp(hireDate.date).format('MMM DD, YYYY') },
+        createdAt: getDateFromTimestamp(createdAt).format('MMM DD, YYYY')
+      });
+    }));
+    return results;
+  } catch (error) {
+    throw error.message;
+  }
+};
+
+const getEmployeesCollectionCount = async (isActive) => {
+  const snapshot = await firestore.collection(collectionName).where('isActive', '==', isActive).get();
+  return snapshot.size;
+};
+
+export { createEmployeeDocument, getPageEmployees, getEmployeesCollectionCount };
