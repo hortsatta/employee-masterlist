@@ -10,7 +10,6 @@ import employeePlaceholder from 'assets/employee-placeholder.png';
 import { MomentDateInput, InputGroups } from 'common/components';
 import GenderSelect from '../gender-select/gender-select.component';
 
-
 const PersonalInfoForm = ({
   fields,
   errors,
