@@ -7,7 +7,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 
-import './upsert-employee.styles.scss';
+import './upsert-employee-page.styles.scss';
 import { usePrevious } from 'common/custom-hooks';
 import { WithDelay, WithProcessing } from 'common/containers';
 import { setNotificationError, setNotificationSuccess } from 'features/core/store';
