@@ -53,9 +53,25 @@ const PAGE_TITLES = {
     title: 'New Employee',
     subtitle: 'Add an employee by using the form below.'
   },
-  employeeList: { path: '/employees', title: 'Employees' }
+  employeeList: {
+    path: '/employees',
+    title: 'Employees',
+    subtitle: 'List of employees currently working at the company'
+  }
+};
+
+const PAGE_MODE = {
+  next: 'next',
+  previous: 'previous'
+};
+
+const PAGE_KEYS = {
+  employees: {
+    fullName: 'pageKey.fullName',
+    dateHired: 'pageKey.dateHired'
+  }
 };
 
 const menuLinks = Object.values(LINKS);
 
-export { ROLES, LINKS, PAGE_TITLES, menuLinks };
+export { ROLES, LINKS, PAGE_TITLES, PAGE_MODE, PAGE_KEYS, menuLinks };
