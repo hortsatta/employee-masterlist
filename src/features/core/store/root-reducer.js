@@ -5,6 +5,7 @@ import storage from 'redux-persist/lib/storage';
 import { authReducer } from 'features/auth/store';
 import { departmentReducer } from 'features/department/store';
 import { jobTitleReducer } from 'features/job-title/store';
+import { employeeReducer } from 'features/employee/store';
 import coreReducer from './core.reducer';
 
 const persistConfig = {
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   core: coreReducer,
   auth: authReducer,
   departments: departmentReducer,
-  jobTitles: jobTitleReducer
+  jobTitles: jobTitleReducer,
+  employees: employeeReducer
 });
 
 // Use redux-persist with config to keep data in localstorage
