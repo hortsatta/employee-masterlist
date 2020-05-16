@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { Button, Callout, H4, H5, Intent, FormGroup, ButtonGroup, Divider, Popover } from '@blueprintjs/core';
@@ -13,6 +14,8 @@ import { WithDelay, WithProcessing } from 'common/containers';
 import { setNotificationError, setNotificationSuccess } from 'features/core/store';
 import { createEmployeeDocument } from '../../employee.service';
 import { EmployeeInfoForm, PersonalInfoForm } from '../../components';
+import { selectEmployee, fetchEmployeeStart } from '../../store';
+import { useCallback } from 'react';
 
 const PopoverConfirm = ({ handleCancel, handleSubmit }) => (
   <div className='popover popover-confirm'>
@@ -36,7 +39,17 @@ const PopoverConfirm = ({ handleCancel, handleSubmit }) => (
   </div>
 );
 
-const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess, isUpdate = false }) => {
+const UpsertEmployeePage = ({
+  match,
+  employee,
+  fetchEmployeeStartDispatch,
+  setNotificationSuccessDispatch,
+  setNotificationErrorDispatch,
+  isProcessing,
+  doProcess,
+  isUpdate = false
+}) => {
+  const { id: employeeId } = match.params;
   const [isLoading, setIsLoading] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
   const [resetAnimation, setResetAnimation] = useState('');
@@ -100,10 +113,10 @@ const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess, isUpdate = fals
       try {
         await createEmployeeDocument(values);
         setIsLoading(false);
-        dispatch(setNotificationSuccess(`Employee ${values.firstName} successfully enrolled.`));
+        setNotificationSuccessDispatch(`Employee ${values.firstName} successfully enrolled.`);
       } catch (errorMessage) {
         setIsLoading(false);
-        dispatch(setNotificationError(errorMessage));
+        setNotificationErrorDispatch(errorMessage);
       }
     }
   });
@@ -111,6 +124,22 @@ const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess, isUpdate = fals
   const { values: { department }, setFieldValue } = formik;
   // Used to store previous department value for checking select component
   const prevDepartment = usePrevious(department);
+
+  const updateEmployeeFields = useCallback((currentEmployee) => {
+    setFieldValue('firstName', currentEmployee.personalInfo.firstName);
+  }, [setFieldValue]);
+
+  // For updating employee
+  useEffect(() => {
+    if (!isUpdate || !employeeId) { return; }
+
+    if (!employee) {
+      fetchEmployeeStartDispatch(employeeId);
+      return;
+    }
+
+    updateEmployeeFields(employee);
+  }, [isUpdate, employeeId, employee, updateEmployeeFields, fetchEmployeeStartDispatch]);
 
   // If selected department has changed in select component then set jobTitle to null
   useEffect(() => {
@@ -209,14 +238,32 @@ const UpsertEmployeePage = ({ dispatch, isProcessing, doProcess, isUpdate = fals
 };
 
 UpsertEmployeePage.propTypes = {
-  dispatch: PropTypes.func.isRequired,
+  match: PropTypes.shape({ params: PropTypes.object }),
+  employee: PropTypes.shape(),
+  fetchEmployeeStartDispatch: PropTypes.func.isRequired,
+  setNotificationSuccessDispatch: PropTypes.func.isRequired,
+  setNotificationErrorDispatch: PropTypes.func.isRequired,
   isProcessing: PropTypes.bool,
   doProcess: PropTypes.func.isRequired,
   isUpdate: PropTypes.bool
 };
 
+const mapStateToProps = (state, { match }) => ({
+  employee: selectEmployee(match.params.id)(state)
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchEmployeeStartDispatch: (id) => dispatch(fetchEmployeeStart(id)),
+  setNotificationSuccessDispatch: (message) => dispatch(setNotificationSuccess(message)),
+  setNotificationErrorDispatch: (errorMessage) => dispatch(setNotificationError(errorMessage))
+});
+
 export default compose(
-  connect(),
+  withRouter,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  ),
   WithDelay,
   WithProcessing
 )(UpsertEmployeePage);

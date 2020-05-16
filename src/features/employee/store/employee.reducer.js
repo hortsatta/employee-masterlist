@@ -1,22 +1,28 @@
-import { PAGE_KEYS } from 'config/system.config';
 import { EmployeeActionTypes } from './employee.actions';
 
 const INITIAL_STATE = {
   isLoading: false,
+  employee: undefined,
   pageEmployees: undefined,
   collectionSize: undefined,
-  currentPage: { index: 0, isLast: true },
-  currentPagekey: PAGE_KEYS.employees.fullName
+  currentPage: { index: 0, isLast: true }
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case EmployeeActionTypes.FETCH_EMPLOYEE_START:
     case EmployeeActionTypes.FETCH_INITIAL_PAGE_EMPLOYEES_START:
     case EmployeeActionTypes.FETCH_PREVIOUS_PAGE_EMPLOYEES_START:
     case EmployeeActionTypes.FETCH_NEXT_PAGE_EMPLOYEES_START:
       return {
         ...state,
         isLoading: true
+      };
+    case EmployeeActionTypes.FETCH_EMPLOYEE_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        employee: action.payload
       };
     case EmployeeActionTypes.FETCH_INITIAL_PAGE_EMPLOYEES_SUCCESS: {
       const { employees, collectionSize } = action.payload;
@@ -53,15 +59,11 @@ export default (state = INITIAL_STATE, action) => {
         }
       };
     }
+    case EmployeeActionTypes.FETCH_EMPLOYEE_FAILURE:
     case EmployeeActionTypes.FETCH_PAGE_EMPLOYEES_FAILURE:
       return {
         ...state,
         isLoading: false
-      };
-    case EmployeeActionTypes.SET_CURRENT_PAGE_KEY:
-      return {
-        ...state,
-        currentPagekey: action.payload
       };
     default:
       return state;

@@ -1,27 +1,39 @@
 const EmployeeActionTypes = {
+  FETCH_EMPLOYEE_START: 'FETCH_EMPLOYEE_START',
   FETCH_INITIAL_PAGE_EMPLOYEES_START: 'FETCH_INITIAL_PAGE_EMPLOYEES_START',
   FETCH_PREVIOUS_PAGE_EMPLOYEES_START: 'FETCH_PREVIOUS_PAGE_EMPLOYEES_START',
   FETCH_NEXT_PAGE_EMPLOYEES_START: 'FETCH_NEXT_PAGE_EMPLOYEES_START',
+  FETCH_EMPLOYEE_SUCCESS: 'FETCH_EMPLOYEE_SUCCESS',
   FETCH_INITIAL_PAGE_EMPLOYEES_SUCCESS: 'FETCH_INITIAL_PAGE_EMPLOYEES_SUCCESS',
   FETCH_PREVIOUS_PAGE_EMPLOYEES_SUCCESS: 'FETCH_PREVIOUS_PAGE_EMPLOYEES_SUCCESS',
   FETCH_NEXT_PAGE_EMPLOYEES_SUCCESS: 'FETCH_NEXT_PAGE_EMPLOYEES_SUCCESS',
-  FETCH_PAGE_EMPLOYEES_FAILURE: 'FETCH_PAGE_EMPLOYEES_FAILURE',
-  SET_CURRENT_PAGE_KEY: 'SET_CURRENT_PAGE_KEY'
+  FETCH_EMPLOYEE_FAILURE: 'FETCH_EMPLOYEE_FAILURE',
+  FETCH_PAGE_EMPLOYEES_FAILURE: 'FETCH_PAGE_EMPLOYEES_FAILURE'
 };
 
-const fetchInitialPageEmployeesStart = (isActive, sortBy) => ({
+const fetchEmployeeStart = (id) => ({
+  type: EmployeeActionTypes.FETCH_EMPLOYEE_START,
+  payload: id
+});
+
+const fetchInitialPageEmployeesStart = (pageKey, isActive, sortBy) => ({
   type: EmployeeActionTypes.FETCH_INITIAL_PAGE_EMPLOYEES_START,
-  payload: { isActive, sortBy }
+  payload: { pageKey, isActive, sortBy }
 });
 
-const fetchPreviousPageEmployeesStart = (isActive, sortBy) => ({
+const fetchPreviousPageEmployeesStart = (pageKey, isActive, sortBy) => ({
   type: EmployeeActionTypes.FETCH_PREVIOUS_PAGE_EMPLOYEES_START,
-  payload: { isActive, sortBy }
+  payload: { pageKey, isActive, sortBy }
 });
 
-const fetchNextPageEmployeesStart = (isActive, sortBy) => ({
+const fetchNextPageEmployeesStart = (pageKey, isActive, sortBy) => ({
   type: EmployeeActionTypes.FETCH_NEXT_PAGE_EMPLOYEES_START,
-  payload: { isActive, sortBy }
+  payload: { pageKey, isActive, sortBy }
+});
+
+const fetchEmployeeSuccess = (employee) => ({
+  type: EmployeeActionTypes.FETCH_EMPLOYEE_SUCCESS,
+  payload: employee
 });
 
 const fetchInitialPageEmployeesSuccess = (employees, collectionSize) => ({
@@ -39,23 +51,24 @@ const fetchNextPageEmployeesSuccess = (employees, pageIndex) => ({
   payload: { employees, pageIndex }
 });
 
+const fetchEmployeeFailure = () => ({
+  type: EmployeeActionTypes.FETCH_EMPLOYEE_FAILURE
+});
+
 const fetchPageEmployeesFailure = () => ({
   type: EmployeeActionTypes.FETCH_PAGE_EMPLOYEES_FAILURE
 });
 
-const setCurrentPageKey = (pageKey) => ({
-  type: EmployeeActionTypes.SET_CURRENT_PAGE_KEY,
-  payload: pageKey
-});
-
 export {
   EmployeeActionTypes,
+  fetchEmployeeStart,
   fetchInitialPageEmployeesStart,
   fetchPreviousPageEmployeesStart,
   fetchNextPageEmployeesStart,
+  fetchEmployeeSuccess,
   fetchInitialPageEmployeesSuccess,
   fetchPreviousPageEmployeesSuccess,
   fetchNextPageEmployeesSuccess,
-  fetchPageEmployeesFailure,
-  setCurrentPageKey
+  fetchEmployeeFailure,
+  fetchPageEmployeesFailure
 };

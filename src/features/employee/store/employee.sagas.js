@@ -1,16 +1,17 @@
 import { takeLatest, all, call, put, select } from 'redux-saga/effects';
 
-import { PAGE_MODE } from 'config/system.config';
+import { PAGE_MODE, PAGE_KEYS } from 'config/system.config';
 import { setNotificationError } from 'features/core/store';
-import { getPageEmployees, getEmployeesCollectionCount } from '../employee.service';
+import { getPageEmployees, getEmployeesCollectionCount, getEmployeeById } from '../employee.service';
 import {
   EmployeeActionTypes,
   fetchInitialPageEmployeesSuccess,
   fetchPageEmployeesFailure,
   fetchNextPageEmployeesSuccess,
-  fetchPreviousPageEmployeesSuccess
+  fetchPreviousPageEmployeesSuccess,
+  fetchEmployeeSuccess
 } from './employee.actions';
-import { selectCurrentPage, selectPageEmployees, selectCurrentPageKey } from './employee.selectors';
+import { selectCurrentPage, selectPageEmployees } from './employee.selectors';
 
 function* dispatchError(errorMessage) {
   yield put(fetchPageEmployeesFailure());
@@ -25,15 +26,28 @@ function* getPageAndEmployees(isNext) {
   return { newPageIndex, currentEmployees, newEmployees };
 }
 
+function* onFetchEmployeeStart() {
+  yield takeLatest(
+    EmployeeActionTypes.FETCH_EMPLOYEE_START,
+    function* ({ payload }) {
+      try {
+        const employee = yield call(getEmployeeById, payload)
+        yield put(fetchEmployeeSuccess(employee));
+      } catch (errorMessage) {
+        yield dispatchError('asd', errorMessage);
+      }
+    }
+  );
+}
+
 function* onFetchInitialEmployeesStart() {
   yield takeLatest(
     EmployeeActionTypes.FETCH_INITIAL_PAGE_EMPLOYEES_START,
     function* ({ payload }) {
       try {
-        const { isActive, sortBy } = payload;
+        const { pageKey, isActive, sortBy } = payload;
         const collectionSize = yield call(getEmployeesCollectionCount, isActive);
-        const currentPageKey = yield select(selectCurrentPageKey); console.log(currentPageKey);
-        const employees = yield call(getPageEmployees, { field: currentPageKey }, isActive, sortBy);
+        const employees = yield call(getPageEmployees, { field: pageKey }, isActive, sortBy);
         yield put(fetchInitialPageEmployeesSuccess(employees, collectionSize));
       } catch (errorMessage) {
         yield dispatchError(errorMessage);
@@ -52,16 +66,17 @@ function* onFetchPreviousEmployeesStart() {
         if (!currentEmployees?.length) { return; }
 
         if (!newEmployees) {
-          const currentPageKey = yield select(selectCurrentPageKey);
+          const { pageKey, isActive, sortBy } = payload;
           const target = currentEmployees[0];
           const employees = yield call(
             getPageEmployees,
             {
               mode: PAGE_MODE.back,
-              field: currentPageKey,
-              pageKey: target.pageKey.fullName
+              field: pageKey,
+              pageKey: pageKey === PAGE_KEYS.employees.fullName ? target.pageKey.fullName : target.pageKey.hireDate
             },
-            payload
+            isActive,
+            sortBy
           );
           yield put(fetchPreviousPageEmployeesSuccess(employees, newPageIndex));
         } else {
@@ -84,16 +99,17 @@ function* onFetchNextEmployeesStart() {
         if (!currentEmployees?.length) { return; }
 
         if (!newEmployees) {
-          const currentPageKey = yield select(selectCurrentPageKey);
+          const { pageKey, isActive, sortBy } = payload; console.log('payload', payload);
           const target = currentEmployees[currentEmployees.length - 1];
           const employees = yield call(
             getPageEmployees,
             {
               mode: PAGE_MODE.next,
-              field: currentPageKey,
-              pageKey: target.pageKey.fullName
+              field: pageKey,
+              pageKey: pageKey === PAGE_KEYS.employees.fullName ? target.pageKey.fullName : target.pageKey.hireDate
             },
-            payload
+            isActive,
+            sortBy
           );
           yield put(fetchNextPageEmployeesSuccess(employees, newPageIndex));
         } else {
@@ -108,6 +124,7 @@ function* onFetchNextEmployeesStart() {
 
 export default function* employeeSagas() {
   yield all([
+    call(onFetchEmployeeStart),
     call(onFetchInitialEmployeesStart),
     call(onFetchPreviousEmployeesStart),
     call(onFetchNextEmployeesStart)

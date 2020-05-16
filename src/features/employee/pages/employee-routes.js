@@ -8,6 +8,7 @@ const EmployeeListPage = lazy(() => import('./employee-list-page/employee-list-p
 const EmployeeRoutes = ({ path }) => (
   <>
     <Route exact path={`${path}/new`} component={UpsertEmployeePage} />
+    <Route exact path={`${path}/:id/edit`} render={() => <UpsertEmployeePage isUpdate />} />
     <Route exact path={`${path}`} component={EmployeeListPage} />
   </>
 );

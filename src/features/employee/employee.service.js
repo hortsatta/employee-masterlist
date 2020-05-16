@@ -161,8 +161,8 @@ const getEmployeeJobTitle = async (employeeId) => {
   return await getJobTitleById(titleId);
 };
 
-const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => { console.log(isActive, sortBy)
-  const pageSize = 3;
+const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => {
+  const pageSize = 3; console.log(cursor, isActive, sortBy)
   const field = dotProp.get(cursor, 'field', 'pageKey.fullName')
   let snapshots;
 
@@ -228,9 +228,49 @@ const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => { co
   }
 };
 
+const getEmployeeById = async (id) => {
+  const snapshot = await firestore.collection(collectionName).doc(id).get();
+
+  if (!snapshot.exists) { return undefined; }
+
+  try {
+    const data = snapshot.data();
+    const { hireDate, createdAt } = data;
+    const { birthDate, firstName, middleInitial, lastName, picture } = data.personalInfo;
+
+    const salary = await getEmployeeSalary(snapshot.id);
+    const department = await getEmployeeDepartment(snapshot.id);
+    const jobTitle = await getEmployeeJobTitle(snapshot.id);
+    const employeePicture = picture ? await storage.child(`${picture}`).getDownloadURL() : undefined;
+
+    return ({
+      ...data,
+      id: snapshot.id,
+      personalInfo: {
+        ...data.personalInfo,
+        fullName: `${firstName} ${middleInitial} ${lastName}`,
+        birthDate: { ...birthDate, date: getDateFromTimestamp(birthDate.date).format('MMM DD, YYYY') },
+        picture: employeePicture
+      },
+      salary,
+      department,
+      jobTitle,
+      hireDate: { ...hireDate, date: getDateFromTimestamp(hireDate.date).format('MMM DD, YYYY') },
+      createdAt: getDateFromTimestamp(createdAt).format('MMM DD, YYYY')
+    });
+  } catch (error) {
+    throw error.message;
+  }
+}
+
 const getEmployeesCollectionCount = async (isActive) => {
   const snapshot = await firestore.collection(collectionName).where('isActive', '==', isActive).get();
   return snapshot.size;
 };
 
-export { createEmployeeDocument, getPageEmployees, getEmployeesCollectionCount };
+export {
+  createEmployeeDocument,
+  getPageEmployees,
+  getEmployeeById,
+  getEmployeesCollectionCount
+};
