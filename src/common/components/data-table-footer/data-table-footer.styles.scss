@@ -17,5 +17,11 @@
     span.current-page {
       padding: 0 1rem;
     }
+
+    .button-nav {
+      display: flex;
+      align-items: flex-end;
+      line-height: 1;
+    }
   }
 }

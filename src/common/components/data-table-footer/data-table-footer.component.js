@@ -31,15 +31,19 @@ const DataTableFooter = ({
       isPage && (
         <ButtonGroup disabled={isLoading}>
           <Button
+            className='button-nav'
             minimal
             text='Prev'
+            icon={IconNames.CHEVRON_LEFT}
             disabled={(!currentPage || currentPage.index <= 1) || isLoading}
             onClick={handlePreviousPageClick}
           />
           <span className='current-page'>{currentPage.index}</span>
           <Button
+            className='button-nav'
             minimal
             text='Next'
+            rightIcon={IconNames.CHEVRON_RIGHT}
             disabled={(!currentPage || currentPage.isLast) || isLoading}
             onClick={handleNextPageClick}
           />
