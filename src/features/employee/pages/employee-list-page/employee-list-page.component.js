@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
+import { PAGE_KEYS } from 'config/system.config';
 import { WithDelay } from 'common/containers';
 import { selectCurrentPage, selectPageEmployees, fetchInitialPageEmployeesStart } from '../../store';
 import { EmployeeListTable } from '../../components';
@@ -32,6 +34,12 @@ const EmployeeListPage = ({ currentPageIndex, employees, fetchInitialPageEmploye
   );
 };
 
+EmployeeListPage.propTypes = {
+  currentPageIndex: PropTypes.number.isRequired,
+  employees: PropTypes.arrayOf(PropTypes.object),
+  fetchInitialPageEmployeesStartDispatch: PropTypes.func.isRequired
+};
+
 const mapStateToProps = (state) => ({
   currentPage: selectCurrentPage()(state),
   state
@@ -39,7 +47,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchInitialPageEmployeesStartDispatch: (isActive) => (
-    dispatch(fetchInitialPageEmployeesStart(isActive, 'asc')))
+    dispatch(fetchInitialPageEmployeesStart(PAGE_KEYS.employees.fullName, isActive, 'asc')))
 });
 
 const mergeProps = ({ state, currentPage }, dispatchProps, ownProps) => ({

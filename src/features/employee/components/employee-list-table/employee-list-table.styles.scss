@@ -11,12 +11,18 @@
     }
   }
 
+  .bp3-table-header:not(.bp3-loading) {
+    &.bp3-table-cell-col-0 .bp3-table-column-name {
+      text-align: center;
+    }
+  }
+
   .bp3-table-cell:not(.bp3-loading) {
     display: flex;
     align-items: center;
 
     &.bp3-table-cell-col-0 {
-      padding: 0 1px 0 0;
+      padding: 0 1px 0 0;;
 
       img {
         width: 100%;
