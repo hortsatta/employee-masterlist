@@ -15,11 +15,20 @@ header.main-header {
 
   .page-title {
     padding-left: 2rem;
+    display: flex;
+    align-items: baseline;
 
     h1.bp3-heading {
       margin: 0;
       font-family: 'Poiret One', cursive;
       font-size: 28px;
+
+      &:after {
+        content: '/';
+        margin: 0 0.5rem;
+        font-weight: 400;
+        opacity: 0.5;
+      }
     }
   }
 }

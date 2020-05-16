@@ -53,6 +53,11 @@ const PAGE_TITLES = {
     title: 'New Employee',
     subtitle: 'Add an employee by using the form below.'
   },
+  editEmployee: {
+    path: '/employees/:id/edit',
+    title: 'Edit Employee',
+    subtitle: 'Update employee information.'
+  },
   employeeList: {
     path: '/employees',
     title: 'Employees',
@@ -68,7 +73,7 @@ const PAGE_MODE = {
 const PAGE_KEYS = {
   employees: {
     fullName: 'pageKey.fullName',
-    dateHired: 'pageKey.dateHired'
+    hireDate: 'pageKey.hireDate'
   }
 };
 
