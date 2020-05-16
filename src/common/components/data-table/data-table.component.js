@@ -1,10 +1,19 @@
 import React from 'react';
-import { Menu, MenuItem } from '@blueprintjs/core';
-import { Table, Column, ColumnHeaderCell, Cell, CopyCellsMenuItem, TableLoadingOption } from '@blueprintjs/table';
+import { Button, Menu, MenuItem, Popover, Position, Icon } from '@blueprintjs/core';
+import {
+  Table,
+  Column,
+  ColumnHeaderCell,
+  Cell,
+  CopyCellsMenuItem,
+  TableLoadingOption,
+  RenderMode
+} from '@blueprintjs/table';
 import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
 
 import '@blueprintjs/table/lib/css/table.css';
+import './data-table.styles.scss';
 
 const menuRenderer = (i, handleSorting) => (
   <Menu>
@@ -13,7 +22,23 @@ const menuRenderer = (i, handleSorting) => (
   </Menu>
 );
 
-const DataTable = ({ className, isLoading, numRows, columns, columnWidths }) => {
+const menuColumnRender = (cellData) => {
+  const cellRenderer = (iRow) => (
+    <Cell>
+      <Popover
+        boundary='window'
+        position={Position.RIGHT_TOP}
+        content={cellData(iRow)}
+      >
+        <Button minimal icon={IconNames.MORE} />
+      </Popover>
+    </Cell>
+  );
+
+  return (<Column className='action-column' name={<Icon icon={IconNames.EDIT} />} cellRenderer={cellRenderer} />);
+};
+
+const DataTable = ({ className, isLoading, numRows, columns, columnWidths, cellMenu }) => {
   const getColumn = (name, i, cellData, handleSorting) => {
     const cellRenderer = (iRow) => (
       <Cell>{cellData(iRow)}</Cell>
@@ -38,7 +63,7 @@ const DataTable = ({ className, isLoading, numRows, columns, columnWidths }) => 
 
   const bodyContextMenuRenderer = (context) => (
     <Menu>
-      <CopyCellsMenuItem context={context} text='Copy' />
+      <CopyCellsMenuItem text='Copy' icon={IconNames.DUPLICATE} context={context} />
     </Menu>
   );
 
@@ -49,8 +74,9 @@ const DataTable = ({ className, isLoading, numRows, columns, columnWidths }) => 
           ? [TableLoadingOption.ROW_HEADERS, TableLoadingOption.CELLS]
           : []
       }
-      className={className}
-      columnWidths={columnWidths}
+      renderMode={RenderMode.NONE}
+      className={`data-table ${className}`}
+      columnWidths={[...columnWidths, 50]}
       numRows={numRows}
       bodyContextMenuRenderer={bodyContextMenuRenderer}
       defaultRowHeight={50}
@@ -59,6 +85,7 @@ const DataTable = ({ className, isLoading, numRows, columns, columnWidths }) => 
         columns.map((column, i) => (
           getColumn(column.name, i, column.cellData, column.handleSorting)))
       }
+      {menuColumnRender(cellMenu)}
     </Table>
   );
 };
@@ -68,7 +95,8 @@ DataTable.propTypes = {
   isLoading: PropTypes.bool,
   numRows: PropTypes.number,
   columns: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-  columnWidths: PropTypes.arrayOf(PropTypes.number)
+  columnWidths: PropTypes.arrayOf(PropTypes.number),
+  cellMenu: PropTypes.func
 };
 
 export default DataTable;
