@@ -42,7 +42,7 @@ const EmployeeInfoForm = ({
               className={`input-field ${errors?.department && touched?.department ? 'error' : ''}`}
               name='department'
               department={department}
-              onItemSelect={(e) => handleCustomChange({ target: { value: e, name: 'department' } })}
+              onItemSelect={(e) => { handleCustomChange({ target: { value: e, name: 'department' } }) }}
               disabled={disabled}
             />
             {isUpdate && <HistoryButton disabled={disabled} />} 

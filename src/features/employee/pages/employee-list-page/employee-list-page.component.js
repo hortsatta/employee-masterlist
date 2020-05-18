@@ -12,12 +12,16 @@ const EMPLOYEES_PLACEHOLDER = [...Array(7)].map(() => ({
     fullName: 'John Smith',
     gender: 'Male'
   },
-  jobTitle: { name: 'Accounting' },
-  department: { alias: 'Accounting and Finance' },
+  jobTitle: { titleId: 'hWamU8bktOTYu5ZYftt6' },
+  department: { departmentId: '96AXvOeRZXkEoDCbuhWq' },
   hireDate: { date: 'Jan 01, 1999' }
 }));
 
-const EmployeeListPage = ({ currentPageIndex, employees, fetchInitialPageEmployeesStartDispatch }) => {
+const EmployeeListPage = ({
+  currentPageIndex,
+  employees,
+  fetchInitialPageEmployeesStartDispatch
+}) => {
   useEffect(() => {
     if (currentPageIndex === 0 && !employees) {
       fetchInitialPageEmployeesStartDispatch(true);
