@@ -53,10 +53,10 @@ const PAGE_TITLES = {
     title: 'New Employee',
     subtitle: 'Add an employee by using the form below.'
   },
-  editEmployee: {
-    path: '/employees/:id/edit',
-    title: 'Edit Employee',
-    subtitle: 'Update employee information.'
+  updateEmployee: {
+    path: '/employees/:id/update',
+    title: 'Update Employee',
+    subtitle: 'Modify personal information or update employee role.'
   },
   employeeList: {
     path: '/employees',

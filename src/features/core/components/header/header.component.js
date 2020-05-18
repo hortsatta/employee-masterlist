@@ -13,10 +13,10 @@ import { selectExpandSideNav, selectDarkMode } from '../../store';
 import { compose } from 'redux';
 
 const getPageTitle = (pathname) => {
-  if (pathname.includes('edit')) {
+  if (pathname.includes('update')) {
     switch (true) {
       case pathname.includes('employee'):
-        return PAGE_TITLES.editEmployee;
+        return PAGE_TITLES.updateEmployee;
       default:
         return '';
     }
