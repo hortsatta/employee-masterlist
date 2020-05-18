@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import 'firebase/storage';
+import moment from 'moment';
 
 // Set firebase config from dotenv
 const config = {
@@ -34,26 +35,9 @@ const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
   return batch.commit();
 };
 
-const convertMapToObj = (list) => (
-  list.reduce((acc, item) => {
-    const key = item.departmentId.toLowerCase();
-
-    if (!acc[key]) {
-      acc[key] = [];
-    } else {
-      acc[key] = [...acc[key], item];
-    }
-
-    return acc;
-  }, {})
+const getDateFromTimestamp = ({ seconds, nanoseconds }) => (
+  moment((new firebase.firestore.Timestamp(seconds, nanoseconds)).toDate())
 );
-
-const convertObjectToMap = (object) => (
-  Object.keys(object).reduce((acc, key) => (
-    acc.concat(key, object[key])
-  ), [])
-);
-
 
 export {
   firebase,
@@ -61,6 +45,5 @@ export {
   firestore,
   storage,
   addCollectionAndDocuments,
-  convertMapToObj,
-  convertObjectToMap
+  getDateFromTimestamp
 };
