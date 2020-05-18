@@ -5,8 +5,6 @@ import dotProp from 'dot-prop';
 
 import { firebase, firestore, storage, getDateFromTimestamp } from 'common/utils';
 import { PAGE_MODE } from 'config/system.config';
-import { getDepartmentById } from 'features/department/department.service';
-import { getJobTitleById } from 'features/job-title/job-title.service';
 
 const collectionName = 'employees';
 
@@ -17,6 +15,96 @@ const createThumbBase64 = async (rawBase64) => {
   const thumbJimp = await Jimp.read(Buffer.from(rawBase64, 'base64'));
   return thumbJimp.resize(64, 64).getBase64Async(Jimp.MIME_JPEG);
 };
+
+const getEmployeeSalary = async (employeeId, limit) => {
+  const salaryCollectionName = 'salary'
+  const ref = await firestore
+    .collection(collectionName)
+    .doc(employeeId)
+    .collection(salaryCollectionName)
+    .orderBy('createdAt', 'desc');
+
+  const refWithLimit = limit ? ref.limit(limit) : ref
+  const snapshots = await refWithLimit.get();
+
+  return snapshots.docs.map((snapshot) => ({ id: snapshot.id, ...snapshot.data() }));
+};
+
+const getEmployeeDepartment = async (employeeId, limit) => {
+  const deptCollectionName = 'department'
+  const ref = firestore
+    .collection(collectionName)
+    .doc(employeeId)
+    .collection(deptCollectionName)
+    .orderBy('createdAt', 'desc');
+
+  const refWithLimit = limit ? ref.limit(limit) : ref
+  const snapshots = await refWithLimit.get();
+
+  return snapshots.docs.map((snapshot) => ({ id: snapshot.id, ...snapshot.data() }));
+};
+
+const getEmployeeJobTitle = async (employeeId, limit) => {
+  const jobTitleCollectionName = 'title'
+  const ref = firestore
+    .collection(collectionName)
+    .doc(employeeId)
+    .collection(jobTitleCollectionName)
+    .orderBy('createdAt', 'desc');
+
+  const refWithLimit = limit ? ref.limit(limit) : ref
+  const snapshots = await refWithLimit.get();
+
+  return snapshots.docs.map((snapshot) => ({ id: snapshot.id, ...snapshot.data() }));
+};
+
+const updateEmployeeSalary = (employeeRef, currentSalaryId, newSalary, isNew = true) => {
+  const serverDate = firebase.firestore.FieldValue.serverTimestamp();
+  const salaryCollectionName = 'salary';
+
+  if (isNew) {
+    const currentSalaryDocRef = employeeRef.collection(salaryCollectionName).doc(currentSalaryId);
+    const newSalaryDocRef = employeeRef.collection(salaryCollectionName).doc();
+    const currentSalaryUpdate = { ref: currentSalaryDocRef, data: { dateTo: serverDate } };
+    const newSalaryUpdate = { ref: newSalaryDocRef, data: { dateFrom: serverDate, salary: newSalary } };
+    return { currentSalaryUpdate, newSalaryUpdate };
+  }
+
+  const currentSalaryDocRef = employeeRef.collection(salaryCollectionName).doc(currentSalaryId);
+  return { ref: currentSalaryDocRef, data: { salary: newSalary } }
+};
+
+const updateEmployeeDepartment = (employeeRef, currentDepartmentId, newDepartmentId, isNew = true) => {
+  const serverDate = firebase.firestore.FieldValue.serverTimestamp();
+  const departmentCollectionName = 'department';
+
+  if (isNew) {
+    const currentDepartmentDocRef = employeeRef.collection(departmentCollectionName).doc(currentDepartmentId);
+    const newDepartmentDocRef = employeeRef.collection(departmentCollectionName).doc();
+    const currentDepartmentUpdate = { ref: currentDepartmentDocRef, data: { dateTo: serverDate } };
+    const newDepartmentUpdate = { ref: newDepartmentDocRef, data: { dateFrom: serverDate, departmentId: newDepartmentId } };
+    return { currentDepartmentUpdate, newDepartmentUpdate };
+  }
+
+  const currentDepartmentDocRef = employeeRef.collection(departmentCollectionName).doc(currentDepartmentId);
+  return { ref: currentDepartmentDocRef, data: { departmentId: newDepartmentId } }
+}
+
+const updateEmployeeJobTitle = (employeeRef, currentJobTitleId, newJobTitletId, isNew = true) => {
+  const serverDate = firebase.firestore.FieldValue.serverTimestamp();
+  const jobTitleCollectionName = 'title';
+
+  if (isNew) {
+    const currentJobTitleDocRef = employeeRef.collection(jobTitleCollectionName).doc(currentJobTitleId);
+    const newJobTitleDocRef = employeeRef.collection(jobTitleCollectionName).doc();
+    const currentJobTitleUpdate = { ref: currentJobTitleDocRef, data: { dateTo: serverDate } };
+    const newJobTitleUpdate = { ref: newJobTitleDocRef, data: { dateFrom: serverDate, titleId: newJobTitletId } };
+    return { currentJobTitleUpdate, newJobTitleUpdate };
+  }
+
+  const currentJobTitleDocRef = employeeRef.collection(jobTitleCollectionName).doc(currentJobTitleId);
+  return { ref: currentJobTitleDocRef, data: { titleId: newJobTitletId } }
+}
 
 const saveEmployeePicture = async (picture, date) => {
   // Create thumb image from employee picture
@@ -120,49 +208,125 @@ const createEmployeeDocument = async (employee) => {
   }
 };
 
-const getEmployeeSalary = async (employeeId) => {
-  const salaryCollectionName = 'salary'
-  const salarySnapshots = await firestore
-    .collection(collectionName)
-    .doc(employeeId)
-    .collection(salaryCollectionName)
-    .orderBy('createdAt', 'desc')
-    .limit(1)
-    .get();
+const updateEmployeeDocument = async (newEmployee, currentEmployee) => {
+  try {
+    const {
+      hireDate,
+      firstName,
+      lastName,
+      middleInitial,
+      birthDate,
+      gender,
+      currentAddress,
+      homeAddress,
+      phones,
+      emails,
+      salary,
+      department: { id: departmentId },
+      jobTitle: { id: jobTitleId },
+      picture
+    } = newEmployee;
 
-  return salarySnapshots.docs.map((snapshot) => snapshot.data())[0];
-};
+    const {
+      id,
+      salary: currentSalary,
+      department: currentDepartment,
+      jobTitle: currentJobTitle
+    } = currentEmployee;
 
-const getEmployeeDepartment = async (employeeId) => {
-  const deptCollectionName = 'department'
-  const departmentSnapshots = await firestore
-    .collection(collectionName)
-    .doc(employeeId)
-    .collection(deptCollectionName)
-    .orderBy('createdAt', 'desc')
-    .limit(1)
-    .get();
+    const currentDate = moment()
 
-  const { departmentId } = departmentSnapshots.docs.map((snapshot) => snapshot.data())[0];
-  return await getDepartmentById(departmentId);
-};
+    const currentSalaryDateFrom = getDateFromTimestamp(currentSalary.dateFrom);
+    const currentDepartmentDateFrom = getDateFromTimestamp(currentDepartment.dateFrom);
+    const currentJobTitleDateFrom = getDateFromTimestamp(currentJobTitle.dateFrom);
+    console.log(currentDate.isSame(currentSalaryDateFrom, 'date'));
 
-const getEmployeeJobTitle = async (employeeId) => {
-  const jobTitleCollectionName = 'title'
-  const jobTitleSnapshots = await firestore
-    .collection(collectionName)
-    .doc(employeeId)
-    .collection(jobTitleCollectionName)
-    .orderBy('createdAt', 'desc')
-    .limit(1)
-    .get();
+    // Check if picture is untouched, if touched then upload new picture to storage
+    const isPictureUntouched = dotProp.get(picture, 'isUntouched', false);
+    let pictureFullPath = null;
+    if (isPictureUntouched) {
+      // Save employee picture to firebase storage and return fullpath
+      pictureFullPath = picture ? await saveEmployeePicture(picture, hireDate) : null;
+    }
+    // Get employee doc to update
+    const employeeDocRef = firestore.collection(collectionName).doc(id);
+    const updateEmployee = {
+      isActive: true,
+      hireDate: {
+        date: hireDate,
+        shortDate: moment(hireDate).format('MM-DD')
+      },
+      personalInfo: {
+        firstName,
+        lastName,
+        middleInitial,
+        birthDate: {
+          date: birthDate,
+          shortDate: moment(birthDate).format('MM-DD')
+        },
+        gender,
+        currentAddress,
+        homeAddress,
+        phones,
+        emails,
+        picture: pictureFullPath
+      },
+      // For sorting pagination
+      pageKey: {
+        fullName: `${firstName}_${middleInitial}_${lastName}_${id}`,
+        hireDate: `${moment(hireDate).format('YYYY-MM-DD')}_${id}`
+      }
+    }
 
-  const { titleId } = jobTitleSnapshots.docs.map((snapshot) => snapshot.data())[0];
-  return await getJobTitleById(titleId);
+    // Initialise batch and batch data creation in firestore
+    const batch = firestore.batch();
+
+    batch.update(employeeDocRef, updateEmployee);
+
+    // Update salary if salary value is changed and not equal to current salary.
+    // Check if current salary has same date as today. If true then just update current salary with new value,
+    // else add date to to current salary and create new doc for new salary.
+    if (currentSalary.salary !== salary) {
+      if (currentDate.isSame(currentSalaryDateFrom, 'date')) {
+        const { ref, data } = updateEmployeeSalary(employeeDocRef, currentSalary.id, salary, false);
+        batch.update(ref, data);
+      } else {
+        const { currentSalaryUpdate, newSalaryUpdate } = updateEmployeeSalary(employeeDocRef, currentSalary.id, salary);
+        batch.update(currentSalaryUpdate.ref, currentSalaryUpdate.data);
+        batch.set(newSalaryUpdate.ref, newSalaryUpdate.data);
+      }
+    }
+
+    if (currentDepartment.departmentId !== departmentId) {
+      if (currentDate.isSame(currentDepartmentDateFrom, 'date')) {
+        const { ref, data } = updateEmployeeDepartment(employeeDocRef, currentDepartment.id, departmentId, false);
+        batch.update(ref, data);
+      } else {
+        const { currentDepartmentUpdate, newDepartmentUpdate } = updateEmployeeDepartment(employeeDocRef, currentDepartment.id, departmentId);
+        batch.update(currentDepartmentUpdate.ref, currentDepartmentUpdate.data);
+        batch.set(newDepartmentUpdate.ref, newDepartmentUpdate.data);
+      }
+    }
+
+    if (currentJobTitle.titleId !== jobTitleId) {
+      if (currentDate.isSame(currentDepartmentDateFrom, 'date')) {
+        const { ref, data } = updateEmployeeJobTitle(employeeDocRef, currentJobTitle.id, jobTitleId, false);
+        batch.update(ref, data);
+      } else {
+        const { currentJobTitleUpdate, newJobTitleUpdate } = updateEmployeeJobTitle(employeeDocRef, currentJobTitle.id, jobTitleId);
+        batch.update(currentJobTitleUpdate.ref, currentJobTitleUpdate.data);
+        batch.set(newJobTitleUpdate.ref, newJobTitleUpdate.data);
+      }
+    }
+
+    await batch.commit();
+  } catch (error) {
+    throw error.message;
+  }
 };
 
 const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => {
-  const pageSize = 3; console.log(cursor, isActive, sortBy)
+  const pageSize = 3;
   const field = dotProp.get(cursor, 'field', 'pageKey.fullName')
   let snapshots;
 
@@ -201,9 +365,9 @@ const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => {
       const { hireDate, createdAt } = data;
       const { birthDate, firstName, middleInitial, lastName, picture } = data.personalInfo;
     
-      const salary = await getEmployeeSalary(snapshot.id);
-      const department = await getEmployeeDepartment(snapshot.id);
-      const jobTitle = await getEmployeeJobTitle(snapshot.id);
+      const salary = (await getEmployeeSalary(snapshot.id, 1))[0];
+      const department = (await getEmployeeDepartment(snapshot.id, 1))[0];
+      const jobTitle = (await getEmployeeJobTitle(snapshot.id, 1))[0];
       const thumb = picture ? await storage.child(`${picture}_thumb`).getDownloadURL() : undefined;
     
       return ({
@@ -238,9 +402,9 @@ const getEmployeeById = async (id) => {
     const { hireDate, createdAt } = data;
     const { birthDate, firstName, middleInitial, lastName, picture } = data.personalInfo;
 
-    const salary = await getEmployeeSalary(snapshot.id);
-    const department = await getEmployeeDepartment(snapshot.id);
-    const jobTitle = await getEmployeeJobTitle(snapshot.id);
+    const [currentSalary, ...prevSalaries] = await getEmployeeSalary(snapshot.id);
+    const [currentDeparment, ...prevDepartments] = await getEmployeeDepartment(snapshot.id);
+    const [currentJobTitle, ...prevJobTitles] = await getEmployeeJobTitle(snapshot.id);
     const employeePicture = picture ? await storage.child(`${picture}`).getDownloadURL() : undefined;
 
     return ({
@@ -252,9 +416,9 @@ const getEmployeeById = async (id) => {
         birthDate: { ...birthDate, date: getDateFromTimestamp(birthDate.date).format('MMM DD, YYYY') },
         picture: employeePicture
       },
-      salary,
-      department,
-      jobTitle,
+      salary: { ...currentSalary, history: prevSalaries },
+      department: { ...currentDeparment, history: prevDepartments },
+      jobTitle: { ...currentJobTitle, history: prevJobTitles },
       hireDate: { ...hireDate, date: getDateFromTimestamp(hireDate.date).format('MMM DD, YYYY') },
       createdAt: getDateFromTimestamp(createdAt).format('MMM DD, YYYY')
     });
@@ -270,6 +434,7 @@ const getEmployeesCollectionCount = async (isActive) => {
 
 export {
   createEmployeeDocument,
+  updateEmployeeDocument,
   getPageEmployees,
   getEmployeeById,
   getEmployeesCollectionCount
