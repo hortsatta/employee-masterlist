@@ -9,7 +9,8 @@ import {
   fetchPageEmployeesFailure,
   fetchNextPageEmployeesSuccess,
   fetchPreviousPageEmployeesSuccess,
-  fetchEmployeeSuccess
+  fetchEmployeeSuccess,
+  fetchEmployeeFailure
 } from './employee.actions';
 import { selectCurrentPage, selectPageEmployees } from './employee.selectors';
 
@@ -34,7 +35,8 @@ function* onFetchEmployeeStart() {
         const employee = yield call(getEmployeeById, payload)
         yield put(fetchEmployeeSuccess(employee));
       } catch (errorMessage) {
-        yield dispatchError('asd', errorMessage);
+        yield put(fetchEmployeeFailure());
+        yield put(setNotificationError(errorMessage));
       }
     }
   );
@@ -99,7 +101,7 @@ function* onFetchNextEmployeesStart() {
         if (!currentEmployees?.length) { return; }
 
         if (!newEmployees) {
-          const { pageKey, isActive, sortBy } = payload; console.log('payload', payload);
+          const { pageKey, isActive, sortBy } = payload;
           const target = currentEmployees[currentEmployees.length - 1];
           const employees = yield call(
             getPageEmployees,
