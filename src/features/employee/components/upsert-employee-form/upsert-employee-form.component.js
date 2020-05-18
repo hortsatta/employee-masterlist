@@ -15,7 +15,7 @@ import { generateJimp } from 'common/utils';
 import { setNotificationError, setNotificationSuccess } from 'features/core/store';
 import { selectAllDepartmentsObj } from 'features/department/store';
 import { selectAllJobTitlesObj } from 'features/job-title/store';
-import { createEmployeeDocument, updateEmployeeDocument } from '../../employee.service';
+import { createEmployeeDocument, updateEmployeeDocument } from '../../services';
 import { EmployeeInfoForm, PersonalInfoForm } from '..';
 
 const PopoverConfirm = ({ handleCancel, handleSubmit }) => (
