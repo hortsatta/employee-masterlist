@@ -1,14 +1,20 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Spinner, Button, FormGroup, FileInput, ControlGroup, InputGroup, Divider, Icon } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
-import Jimp from 'jimp';
 import dotProp from 'dot-prop';
 import PropTypes from 'prop-types';
 
 import './personal-info-form.styles.scss';
 import employeePlaceholder from 'assets/employee-placeholder.png';
+import employeePlaceholder2 from 'assets/employee-placeholder-2.png';
+import { generateJimp } from 'common/utils';
 import { MomentDateInput, InputGroups } from 'common/components';
 import GenderSelect from '../gender-select/gender-select.component';
+
+const genderPictureSrc = {
+  female:  employeePlaceholder,
+  male: employeePlaceholder2
+};
 
 const PersonalInfoForm = ({
   fields,
@@ -38,18 +44,6 @@ const PersonalInfoForm = ({
     picture,
     imageURL
   } = fields;
-
-  const generateJimp = async (fileURL) => {
-    const size = 360;
-    // Convert to jimp, and set desired jimp settings to image,
-    // get image base64, and return it in jimp object
-    const jimp = await Jimp.read(fileURL);
-    const value = jimp.bitmap.width >= jimp.bitmap.height
-      ? jimp.cover(size, size).quality(75)
-      : jimp.resize(size, Jimp.AUTO).crop(0, 0, size, size).quality(75);
-    const base64 = await value.getBase64Async(Jimp.MIME_JPEG);
-    return { ...value, base64 };
-  };
 
   // For file input image select
   const handleInputChange = useCallback(async (e) => { 
@@ -98,7 +92,7 @@ const PersonalInfoForm = ({
     <div className='personal-info'>
       <FormGroup>
         <div className='employee-picture-wrapper'>
-          <div className='employee-picture'>
+          <div className={`employee-picture ${disabled ? 'disabled' : ''}`}>
             <div className={`status ${isFetchingImage ? 'show' : ''}`}>
               {
                 isFetchingImage
@@ -109,7 +103,7 @@ const PersonalInfoForm = ({
                   )
               }
             </div>
-            <img src={picture ? picture.base64 : employeePlaceholder} alt='employee' />
+            <img src={picture ? picture.base64 : (genderPictureSrc[gender.toLowerCase()] || employeePlaceholder)} alt='employee' />
           </div>
           <div className='picture-controls'>
             <InputGroup
