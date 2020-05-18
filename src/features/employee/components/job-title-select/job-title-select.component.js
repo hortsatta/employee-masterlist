@@ -87,7 +87,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mergeProps = ({ jobTitles }, _, ownProps) => ({
-  departmentJobTitles: jobTitles ? convertMapToObj(jobTitles, 'departmentId') : {},
+  departmentJobTitles: jobTitles ? convertMapToObj(jobTitles, 'departmentId', true) : {},
   ...ownProps
 });
 
