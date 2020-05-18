@@ -11,6 +11,8 @@ import employeePlaceholder from 'assets/employee-placeholder.png';
 import employeePlaceholder2 from 'assets/employee-placeholder-2.png';
 import { PAGE_KEYS } from 'config/system.config';
 import { DataTable, DataTableFooter } from 'common/components';
+import { selectAllDepartmentsObj } from 'features/department/store';
+import { selectAllJobTitlesObj } from 'features/job-title/store';
 import {
   fetchInitialPageEmployeesStart,
   fetchNextPageEmployeesStart,
@@ -19,8 +21,11 @@ import {
   selectIsLoading
 } from '../../store';
 
+
 const EmployeeListTable = ({
   isLoading,
+  departments,
+  jobTitles,
   currentPage,
   numRows,
   dataSource,
@@ -35,7 +40,7 @@ const EmployeeListTable = ({
   const cellMenuRender = (i) => (
     <Menu>
       <MenuItem text='View' icon={IconNames.ZOOM_IN} />
-      <MenuItem text='Edit' icon={IconNames.HIGHLIGHT} onClick={() => history.push(`/employees/${dataSource[i].id}/edit`)} />
+      <MenuItem text='Update' icon={IconNames.HIGHLIGHT} onClick={() => history.push(`/employees/${dataSource[i].id}/update`)} />
       <MenuDivider />
       <MenuItem text='Remove' intent={Intent.DANGER} icon={IconNames.TRASH} />
     </Menu>
@@ -61,7 +66,7 @@ const EmployeeListTable = ({
         <img
           className={dataSource[rowIndex].personalInfo.thumb ? '' : 'placeholder'}
           src={generateImgSrc(rowIndex)}
-          alt='employe-thumb'
+          alt='employee-thumb'
         />
       )
     }, {
@@ -70,10 +75,10 @@ const EmployeeListTable = ({
       handleSorting: (isAsc) => handleSorting(isAsc, PAGE_KEYS.employees.fullName)
     }, {
       name: 'Title',
-      cellData: (rowIndex) => dataSource[rowIndex].jobTitle.name
+      cellData: (rowIndex) => jobTitles[dataSource[rowIndex].jobTitle.titleId.toLowerCase()]?.name
     }, {
       name: 'Department',
-      cellData: (rowIndex) => dataSource[rowIndex].department.alias
+      cellData: (rowIndex) => departments[dataSource[rowIndex].department.departmentId.toLowerCase()]?.alias
     }, {
       name: 'Date Hired',
       cellData: (rowIndex) => dataSource[rowIndex].hireDate.date,
@@ -108,6 +113,8 @@ const EmployeeListTable = ({
 
 EmployeeListTable.propTypes = {
   isLoading: PropTypes.bool,
+  departments: PropTypes.shape().isRequired,
+  jobTitles: PropTypes.shape().isRequired,
   currentPage: PropTypes.shape({ index: PropTypes.number, isLast: PropTypes.bool }),
   numRows: PropTypes.number,
   dataSource: PropTypes.arrayOf(PropTypes.shape()),
@@ -118,6 +125,8 @@ EmployeeListTable.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   isLoading: selectIsLoading,
+  departments: selectAllDepartmentsObj,
+  jobTitles: selectAllJobTitlesObj,
   currentPage: selectCurrentPage()
 });
 
