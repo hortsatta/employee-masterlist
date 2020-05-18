@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { H1 } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
@@ -10,7 +11,6 @@ import './header.styles.scss';
 import styles from 'common/styles/styles.scss';
 import { PAGE_TITLES } from 'config/system.config';
 import { selectExpandSideNav, selectDarkMode } from '../../store';
-import { compose } from 'redux';
 
 const getPageTitle = (pathname) => {
   if (pathname.includes('update')) {
@@ -18,7 +18,7 @@ const getPageTitle = (pathname) => {
       case pathname.includes('employee'):
         return PAGE_TITLES.updateEmployee;
       default:
-        return '';
+        return {};
     }
   }
 
@@ -30,7 +30,7 @@ const getPageTitle = (pathname) => {
     case PAGE_TITLES.options.path:
       return PAGE_TITLES.options;
     default:
-      return '';
+      return {};
   }
 };
 
@@ -45,7 +45,7 @@ const Header = ({ expandSideNav, darkMode, pageTitle }) => {
       </Helmet>
       <div className='page-title'>
         <H1>{pageTitle?.title}</H1>
-        {pageTitle?.subtitle && (<small>{pageTitle.subtitle}</small>)}
+        {pageTitle?.subtitle && (<small>{pageTitle?.subtitle}</small>)}
       </div>
     </header>
   );
@@ -56,7 +56,8 @@ Header.propTypes = {
   darkMode: PropTypes.bool.isRequired,
   location: PropTypes.shape({
     pathname: PropTypes.string.isRequired
-  })
+  }),
+  pageTitle: PropTypes.shape()
 };
 
 const mapStateToProps = createStructuredSelector({
