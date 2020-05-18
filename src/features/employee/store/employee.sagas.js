@@ -2,7 +2,7 @@ import { takeLatest, all, call, put, select } from 'redux-saga/effects';
 
 import { PAGE_MODE, PAGE_KEYS } from 'config/system.config';
 import { setNotificationError } from 'features/core/store';
-import { getPageEmployees, getEmployeesCollectionCount, getEmployeeById } from '../employee.service';
+import { getPageEmployees, getEmployeesCollectionCount, getEmployeeById } from '../services';
 import {
   EmployeeActionTypes,
   fetchInitialPageEmployeesSuccess,
@@ -22,7 +22,7 @@ function* dispatchError(errorMessage) {
 function* getPageAndEmployees(isNext) {
   const currentPage = yield select(selectCurrentPage());
   const newPageIndex = isNext ? (currentPage.index + 1) : (currentPage.index - 1);
-  const currentEmployees = yield select(selectPageEmployees(currentPage.index)); 
+  const currentEmployees = yield select(selectPageEmployees(currentPage.index));
   const newEmployees = yield select(selectPageEmployees(newPageIndex));
   return { newPageIndex, currentEmployees, newEmployees };
 }
@@ -32,7 +32,7 @@ function* onFetchEmployeeStart() {
     EmployeeActionTypes.FETCH_EMPLOYEE_START,
     function* ({ payload }) {
       try {
-        const employee = yield call(getEmployeeById, payload)
+        const employee = yield call(getEmployeeById, payload);
         yield put(fetchEmployeeSuccess(employee));
       } catch (errorMessage) {
         yield put(fetchEmployeeFailure());
@@ -63,7 +63,11 @@ function* onFetchPreviousEmployeesStart() {
     EmployeeActionTypes.FETCH_PREVIOUS_PAGE_EMPLOYEES_START,
     function* ({ payload }) {
       try {
-        const { newPageIndex, currentEmployees, newEmployees } = yield call(getPageAndEmployees, false);
+        const {
+          newPageIndex,
+          currentEmployees,
+          newEmployees
+        } = yield call(getPageAndEmployees, false);
 
         if (!currentEmployees?.length) { return; }
 
@@ -75,7 +79,8 @@ function* onFetchPreviousEmployeesStart() {
             {
               mode: PAGE_MODE.back,
               field: pageKey,
-              pageKey: pageKey === PAGE_KEYS.employees.fullName ? target.pageKey.fullName : target.pageKey.hireDate
+              pageKey: pageKey === PAGE_KEYS.employees.fullName
+                ? target.pageKey.fullName : target.pageKey.hireDate
             },
             isActive,
             sortBy
@@ -96,7 +101,11 @@ function* onFetchNextEmployeesStart() {
     EmployeeActionTypes.FETCH_NEXT_PAGE_EMPLOYEES_START,
     function* ({ payload }) {
       try {
-        const { newPageIndex, currentEmployees, newEmployees } = yield call(getPageAndEmployees, true);
+        const {
+          newPageIndex,
+          currentEmployees,
+          newEmployees
+        } = yield call(getPageAndEmployees, true);
 
         if (!currentEmployees?.length) { return; }
 
@@ -108,7 +117,8 @@ function* onFetchNextEmployeesStart() {
             {
               mode: PAGE_MODE.next,
               field: pageKey,
-              pageKey: pageKey === PAGE_KEYS.employees.fullName ? target.pageKey.fullName : target.pageKey.hireDate
+              pageKey: pageKey === PAGE_KEYS.employees.fullName
+                ? target.pageKey.fullName : target.pageKey.hireDate
             },
             isActive,
             sortBy

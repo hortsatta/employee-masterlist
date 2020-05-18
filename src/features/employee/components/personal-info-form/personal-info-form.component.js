@@ -12,7 +12,7 @@ import { MomentDateInput, InputGroups } from 'common/components';
 import GenderSelect from '../gender-select/gender-select.component';
 
 const genderPictureSrc = {
-  female:  employeePlaceholder,
+  female: employeePlaceholder,
   male: employeePlaceholder2
 };
 
@@ -46,20 +46,20 @@ const PersonalInfoForm = ({
   } = fields;
 
   // For file input image select
-  const handleInputChange = useCallback(async (e) => { 
+  const handleInputChange = useCallback(async (e) => {
     try {
       setIsFetchingImage(true);
       const file = e.target.files[0];
       // Generate image url from selected file
       const fileURL = URL.createObjectURL(file);
       const value = await generateJimp(fileURL);
-      const picture = {
+      const newPicture = {
         target: {
           name: 'picture',
           value: { ...value, filename: file.name }
         }
       };
-      handleCustomChange(picture);
+      handleCustomChange(newPicture);
     } catch (error) {
       handleCustomChange({ target: { name: 'picture', value: null } });
     } finally {
@@ -68,7 +68,6 @@ const PersonalInfoForm = ({
       // useful if current selection has been remove via img tag click
       fileInputEl.current.value = '';
     }
-   
   }, [handleCustomChange]);
 
   // For fetching image URL via 'fetch' button
@@ -77,16 +76,22 @@ const PersonalInfoForm = ({
     try {
       setIsFetchingImage(true);
       const value = await generateJimp(imageURL);
-      const picture = {
+      const newPicture = {
         target: {
           name: 'picture',
           value: { ...value }
         }
-      }
-      handleCustomChange(picture);
-    } catch (error) { }
-    finally { setIsFetchingImage(false); }
+      };
+      handleCustomChange(newPicture);
+    // eslint-disable-next-line no-empty
+    } catch (error) {
+    } finally { setIsFetchingImage(false); }
   };
+
+  const renderImgHoverIcon = (picture
+    ? <Icon type='button' icon={IconNames.CROSS} iconSize={100} onClick={() => { handleCustomChange({ target: { name: 'picture', value: null } }); }} />
+    : <Icon type='button' icon={IconNames.IMPORT} iconSize={100} onClick={() => { fileInputEl.current.click(); }} />
+  );
 
   return (
     <div className='personal-info'>
@@ -97,10 +102,7 @@ const PersonalInfoForm = ({
               {
                 isFetchingImage
                   ? (<Spinner size={Spinner.SIZE_LARGE} />)
-                  : (picture
-                    ? <Icon type='button' icon={IconNames.CROSS} iconSize={100} onClick={() => { handleCustomChange({ target: { name: 'picture', value: null } }); }} />
-                    : <Icon type='button' icon={IconNames.IMPORT} iconSize={100} onClick={() => { fileInputEl.current.click() }} />
-                  )
+                  : renderImgHoverIcon
               }
             </div>
             <img src={picture ? picture.base64 : (genderPictureSrc[gender.toLowerCase()] || employeePlaceholder)} alt='employee' />
@@ -114,7 +116,7 @@ const PersonalInfoForm = ({
               value={imageURL}
               onChange={handleChange}
               disabled={disabled || isFetchingImage}
-              rightElement={
+              rightElement={(
                 <Button
                   className='image-url-button'
                   disabled={disabled || isFetchingImage}
@@ -122,7 +124,7 @@ const PersonalInfoForm = ({
                   text='Obtain'
                   onClick={handleURLClick}
                 />
-              }
+              )}
             />
             <small>or</small>
             <FileInput
@@ -259,7 +261,9 @@ PersonalInfoForm.propTypes = {
     currentAddress: PropTypes.string,
     homeAddress: PropTypes.string,
     phones: PropTypes.arrayOf(PropTypes.any),
-    emails: PropTypes.arrayOf(PropTypes.any)
+    emails: PropTypes.arrayOf(PropTypes.any),
+    picture: PropTypes.shape(),
+    imageURL: PropTypes.string
   }).isRequired,
   errors: PropTypes.shape(),
   touched: PropTypes.shape(),

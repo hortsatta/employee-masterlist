@@ -42,10 +42,10 @@ const EmployeeInfoForm = ({
               className={`input-field ${errors?.department && touched?.department ? 'error' : ''}`}
               name='department'
               department={department}
-              onItemSelect={(e) => { handleCustomChange({ target: { value: e, name: 'department' } }) }}
+              onItemSelect={(e) => { handleCustomChange({ target: { value: e, name: 'department' } }); }}
               disabled={disabled}
             />
-            {isUpdate && <HistoryButton disabled={disabled} />} 
+            {isUpdate && <HistoryButton disabled={disabled} />}
           </ControlGroup>
         </div>
         <div className='row-2'>
@@ -63,7 +63,7 @@ const EmployeeInfoForm = ({
               disabled={disabled}
               {...(salary ? { value: salary } : {})}
             />
-            {isUpdate && <HistoryButton disabled={disabled} />} 
+            {isUpdate && <HistoryButton disabled={disabled} />}
           </ControlGroup>
           <ControlGroup fill>
             <JobTitleSelect
@@ -74,7 +74,7 @@ const EmployeeInfoForm = ({
               onItemSelect={(e) => handleCustomChange({ target: { value: e, name: 'jobTitle' } })}
               disabled={disabled}
             />
-            {isUpdate && <HistoryButton disabled={disabled} />} 
+            {isUpdate && <HistoryButton disabled={disabled} />}
           </ControlGroup>
         </div>
       </FormGroup>

@@ -78,7 +78,9 @@ const EmployeeListTable = ({
       cellData: (rowIndex) => jobTitles[dataSource[rowIndex].jobTitle.titleId.toLowerCase()]?.name
     }, {
       name: 'Department',
-      cellData: (rowIndex) => departments[dataSource[rowIndex].department.departmentId.toLowerCase()]?.alias
+      cellData: (rowIndex) => (
+        departments[dataSource[rowIndex].department.departmentId.toLowerCase()]?.alias
+      )
     }, {
       name: 'Date Hired',
       cellData: (rowIndex) => dataSource[rowIndex].hireDate.date,
