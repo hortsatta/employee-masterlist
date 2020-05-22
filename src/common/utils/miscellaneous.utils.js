@@ -2,7 +2,7 @@ import Jimp from 'jimp';
 
 const convertMapToObj = (list, field, isArray = false) => (
   list.reduce((acc, item) => {
-    const key = item[field].toLowerCase();
+    const key = (typeof item[field] === 'string') ? item[field].toLowerCase() : item[field];
 
     if (!acc[key]) {
       acc[key] = isArray ? [] : item;
