@@ -1,5 +1,4 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Button, Callout, H4, H5, Intent, FormGroup, ButtonGroup, Divider, Popover } from '@blueprintjs/core';
@@ -10,6 +9,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 
 import './upsert-employee-form.styles.scss';
+import { navigateToEmployeeList } from 'common/services';
 import { usePrevious } from 'common/custom-hooks';
 import { generateJimp } from 'common/utils';
 import { setNotificationError, setNotificationSuccess } from 'features/core/store';
@@ -53,8 +53,6 @@ const UpsertEmployeeForm = ({
   const [isLoading, setIsLoading] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
   const [resetAnimation, setResetAnimation] = useState('');
-  const history = useHistory();
-
   const formik = useFormik({
     // Form fields validation using Yup
     validationSchema: Yup.object().shape({
@@ -242,6 +240,9 @@ const UpsertEmployeeForm = ({
         <EmployeeInfoForm
           isUpdate={isUpdate}
           fields={formik.values}
+          salaryHistory={employee?.salary.history || []}
+          departmentHistory={employee?.department.history || []}
+          jobTitleHistory={employee?.jobTitle.history || []}
           errors={formik.errors}
           touched={formik.touched}
           handleBlur={formik.handleBlur}
@@ -259,7 +260,8 @@ const UpsertEmployeeForm = ({
             onClick={handleReset}
           />
           <ButtonGroup minimal>
-            <Button type='button' text='Back' onClick={() => history.push('/employees')} />
+            <Button type='button' text='Back' onClick={() => navigateToEmployeeList()} />
+            {/* <Button type='button' text='Back' onClick={() => history.push('/employees')} /> */}
             <Divider />
             <Popover
               hasBackdrop

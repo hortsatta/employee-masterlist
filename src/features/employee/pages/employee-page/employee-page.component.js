@@ -6,9 +6,11 @@ import PropTypes from 'prop-types';
 
 import { fetchAllDepartmentsStart, selectAllDepartments } from 'features/department/store';
 import { fetchJobTitlesByDepartmentIdsStart } from 'features/job-title/store';
+import { selectCurrentUser } from 'features/auth/store';
 import EmployeeRoutes from '../employee-routes';
 
 const EmployeePage = ({
+  currentUser,
   departments,
   fetchAllDepartmentsStartDispatch,
   fetchJobTitlesByDepartmentIdsStartDispatch,
@@ -27,13 +29,14 @@ const EmployeePage = ({
   return (
     <div className='employee-page'>
       <Switch>
-        <EmployeeRoutes path={match.path} />
+        <EmployeeRoutes path={match.path} userRole={currentUser?.userRole} />
       </Switch>
     </div>
   );
 };
 
 const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
   departments: selectAllDepartments
 });
 
@@ -44,6 +47,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 EmployeePage.propTypes = {
+  currentUser: PropTypes.shape(),
   departments: PropTypes.arrayOf(PropTypes.object),
   fetchAllDepartmentsStartDispatch: PropTypes.func.isRequired,
   fetchJobTitlesByDepartmentIdsStartDispatch: PropTypes.func.isRequired,
