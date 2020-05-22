@@ -3,6 +3,7 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import { authReducer } from 'features/auth/store';
+import { userAccountReducer } from 'features/user-account/store';
 import { departmentReducer } from 'features/department/store';
 import { jobTitleReducer } from 'features/job-title/store';
 import { employeeReducer } from 'features/employee/store';
@@ -18,6 +19,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   core: coreReducer,
   auth: authReducer,
+  users: userAccountReducer,
   departments: departmentReducer,
   jobTitles: jobTitleReducer,
   employees: employeeReducer

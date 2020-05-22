@@ -7,9 +7,19 @@ const selectCurrentUser = createSelector(
   (authState) => authState.currentUser
 );
 
+const selectCurrentEmployee = createSelector(
+  [selectAuthState],
+  (authState) => authState.currentEmployee
+);
+
 const selectIsLoading = createSelector(
   [selectAuthState],
   (authState) => authState.isLoading
+);
+
+const selectIsCurrentEmployeeLoading = createSelector(
+  [selectAuthState],
+  (authState) => authState.isCurrentEmployeeLoading
 );
 
 const selectShowSignInDialog = createSelector(
@@ -19,6 +29,8 @@ const selectShowSignInDialog = createSelector(
 
 export {
   selectCurrentUser,
+  selectCurrentEmployee,
   selectIsLoading,
+  selectIsCurrentEmployeeLoading,
   selectShowSignInDialog
 };
