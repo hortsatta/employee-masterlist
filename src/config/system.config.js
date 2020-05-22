@@ -1,28 +1,24 @@
 import { IconNames } from '@blueprintjs/icons';
 
-const ROLES = {
-  administrator: { id: 2, name: 'Administrator' },
-  regular: { id: 1, name: 'Regular' },
-  guest: { id: 0, name: 'Guest' }
-};
+import { employees, options } from './rbac/rbac.types';
 
-const LINKS = {
+const links = {
   employees: {
     icon: IconNames.PEOPLE,
     text: 'Employees',
     to: '/employees',
-    roles: [
-      ROLES.administrator
-    ],
+    rules: [employees.READ],
     children: {
       newEmployee: {
         icon: IconNames.INSERT,
         text: 'Add New Employee',
-        to: '/new'
+        to: '/new',
+        rules: [employees.CREATE]
       },
       employeeList: {
         icon: IconNames.LIST_DETAIL_VIEW,
-        text: 'View Employees'
+        text: 'View Employees',
+        rules: [employees.READ]
       }
     }
   },
@@ -33,15 +29,11 @@ const LINKS = {
     icon: IconNames.SETTINGS,
     text: 'Options',
     to: '/options',
-    roles: [
-      ROLES.administrator,
-      ROLES.regular,
-      ROLES.guest
-    ]
+    rules: [options.READ]
   }
 };
 
-const PAGE_TITLES = {
+const pageTitles = {
   app: { path: '/', title: 'Employee Masterlist' },
   options: {
     path: '/options',
@@ -65,18 +57,18 @@ const PAGE_TITLES = {
   }
 };
 
-const PAGE_MODE = {
-  next: 'next',
-  previous: 'previous'
+const PageMode = {
+  NEXT: 'next',
+  PREVIOUS: 'previous'
 };
 
-const PAGE_KEYS = {
+const pageKeys = {
   employees: {
     fullName: 'pageKey.fullName',
     hireDate: 'pageKey.hireDate'
   }
 };
 
-const menuLinks = Object.values(LINKS);
+const menuLinks = Object.values(links);
 
-export { ROLES, LINKS, PAGE_TITLES, PAGE_MODE, PAGE_KEYS, menuLinks };
+export { links, pageTitles, PageMode, pageKeys, menuLinks };
