@@ -2,7 +2,7 @@ import { DepartmentActionTypes } from './department.actions';
 
 const INITIAL_STATE = {
   isLoading: false,
-  departments: null
+  departments: undefined
 };
 
 export default (state = INITIAL_STATE, action) => {

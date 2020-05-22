@@ -2,7 +2,7 @@ import { JobTitleActionTypes } from './job-title.actions';
 
 const INITIAL_STATE = {
   isLoading: false,
-  jobTitles: null
+  jobTitles: undefined
 };
 
 export default (state = INITIAL_STATE, action) => {
