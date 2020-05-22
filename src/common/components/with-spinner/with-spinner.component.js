@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Spinner, Intent } from '@blueprintjs/core';
+import { Spinner } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
 
 import './with-spinner.styles.scss';
@@ -14,7 +14,7 @@ const WithSpinner = ({ expandSideNav, size }) => {
 
   return (
     <div className='with-spinner' style={expandStyle}>
-      <Spinner size={size || Spinner.SIZE_LARGE} intent={Intent.PRIMARY} />
+      <Spinner size={size || Spinner.SIZE_LARGE} />
     </div>
   );
 };
