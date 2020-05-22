@@ -6,12 +6,13 @@ import { IconNames } from '@blueprintjs/icons';
 import './sign-in-dialog.styles.scss';
 import { WithDialog } from 'common/containers';
 import { selectDarkMode } from 'features/core/store';
-import { toggleSignInDialog, selectShowSignInDialog } from '../../store';
+import { toggleSignInDialog, selectShowSignInDialog, selectIsLoading } from '../../store';
 import SignIn from '../../components/sign-in/sign-in.component';
 
 const mapStateToProps = createStructuredSelector({
+  darkMode: selectDarkMode,
   showSignInDialog: selectShowSignInDialog,
-  darkMode: selectDarkMode
+  isLoading: selectIsLoading
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -19,7 +20,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
-  onClose: dispatchProps.toggleSignInDialogDispatch,
+  onClose: () => !stateProps.isLoading && dispatchProps.toggleSignInDialogDispatch(),
   isOpen: stateProps.showSignInDialog,
   className: `${stateProps.darkMode ? 'bp3-dark' : ''} sign-in-dialog`,
   icon: IconNames.LOG_IN,
