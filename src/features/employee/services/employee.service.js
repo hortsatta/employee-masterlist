@@ -4,11 +4,10 @@ import Jimp from 'jimp';
 import dotProp from 'dot-prop';
 
 import { firebase, firestore, storage, getDateFromTimestamp } from 'common/utils';
-import { PAGE_MODE } from 'config/system.config';
+import { PageMode } from 'config/system.config';
 import {
-  getEmployeeSalary,
-  getEmployeeDepartment,
-  getEmployeeJobTitle,
+  SUBCOLLECTION_NAMES,
+  getEmployeeSubCollection,
   updateEmployeeSalary,
   updateEmployeeDepartment,
   updateEmployeeJobTitle
@@ -263,7 +262,7 @@ const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => {
 
   try {
     switch (cursor?.mode) {
-      case PAGE_MODE.next:
+      case PageMode.NEXT:
         snapshots = await firestore
           .collection(collectionName)
           .where('isActive', '==', isActive)
@@ -272,7 +271,7 @@ const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => {
           .limit(pageSize)
           .get();
         break;
-      case PAGE_MODE.previous:
+      case PageMode.PREVIOUS:
         snapshots = await firestore
           .collection(collectionName)
           .where('isActive', '==', isActive)
@@ -292,13 +291,14 @@ const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => {
     }
 
     const results = await Promise.all(snapshots.docs.map(async (snapshot) => {
+      const employeeDocRef = firestore.collection(collectionName).doc(snapshot.id)
       const data = snapshot.data();
       const { hireDate, createdAt } = data;
       const { birthDate, firstName, middleInitial, lastName, picture } = data.personalInfo;
 
-      const salary = (await getEmployeeSalary(snapshot.id, 1))[0];
-      const department = (await getEmployeeDepartment(snapshot.id, 1))[0];
-      const jobTitle = (await getEmployeeJobTitle(snapshot.id, 1))[0];
+      const salary = (await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.salary, 1))[0];
+      const department = (await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.department, 1))[0];
+      const jobTitle = (await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.jobTitle, 1))[0];
       const thumb = picture ? await storage.child(`${picture}_thumb`).getDownloadURL() : undefined;
 
       return ({
@@ -324,18 +324,19 @@ const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => {
 };
 
 const getEmployeeById = async (id) => {
-  const snapshot = await firestore.collection(collectionName).doc(id).get();
-
-  if (!snapshot.exists) { return undefined; }
-
   try {
+    const employeeDocRef = firestore.collection(collectionName).doc(id);
+    const snapshot = await employeeDocRef.get();
+
+    if (!snapshot.exists) { return undefined; }
+
     const data = snapshot.data();
     const { hireDate, createdAt } = data;
     const { birthDate, firstName, middleInitial, lastName, picture } = data.personalInfo;
 
-    const salary = await getEmployeeSalary(snapshot.id);
-    const department = await getEmployeeDepartment(snapshot.id);
-    const jobTitle = await getEmployeeJobTitle(snapshot.id);
+    const salary = await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.salary);
+    const department = await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.department);
+    const jobTitle = await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.jobTitle);
     const employeePicture = picture ? await storage.child(`${picture}`).getDownloadURL() : undefined;
 
     return ({

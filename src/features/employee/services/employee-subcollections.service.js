@@ -1,49 +1,32 @@
-import { firebase, firestore } from 'common/utils';
+import { firebase, getDateFromTimestamp } from 'common/utils';
 
-const COLLECTION_NAMES = {
-  employees: 'employees',
+const SUBCOLLECTION_NAMES = {
   salary: 'salary',
   department: 'department',
   jobTitle: 'title'
 };
 
-const getEmployeeSalary = async (employeeId, limit) => {
-  const ref = await firestore
-    .collection(COLLECTION_NAMES.employees)
-    .doc(employeeId)
-    .collection(COLLECTION_NAMES.salary)
-    .orderBy('createdAt', 'desc');
-
+const getSubCollectionData = async (ref, limit) => {
   const refWithLimit = limit ? ref.limit(limit) : ref;
   const snapshots = await refWithLimit.get();
 
-  return snapshots.docs.map((snapshot) => ({ id: snapshot.id, ...snapshot.data() }));
+  return snapshots.docs.map((snapshot) => {
+    const { dateFrom, dateTo, ...otherData } = snapshot.data();
+    return {
+      id: snapshot.id,
+      dateFrom: getDateFromTimestamp(dateFrom).format('MMM DD, YYYY'),
+      dateTo: dateTo ? getDateFromTimestamp(dateTo).format('MMM DD, YYYY') : undefined,
+      ...otherData
+    };
+  });
 };
 
-const getEmployeeDepartment = async (employeeId, limit) => {
-  const ref = firestore
-    .collection(COLLECTION_NAMES.employees)
-    .doc(employeeId)
-    .collection(COLLECTION_NAMES.department)
+const getEmployeeSubCollection = (employeeDocRef, subCollectionName, limit) => {
+  const ref = employeeDocRef
+    .collection(subCollectionName)
     .orderBy('createdAt', 'desc');
 
-  const refWithLimit = limit ? ref.limit(limit) : ref;
-  const snapshots = await refWithLimit.get();
-
-  return snapshots.docs.map((snapshot) => ({ id: snapshot.id, ...snapshot.data() }));
-};
-
-const getEmployeeJobTitle = async (employeeId, limit) => {
-  const ref = firestore
-    .collection(COLLECTION_NAMES.employees)
-    .doc(employeeId)
-    .collection(COLLECTION_NAMES.jobTitle)
-    .orderBy('createdAt', 'desc');
-
-  const refWithLimit = limit ? ref.limit(limit) : ref;
-  const snapshots = await refWithLimit.get();
-
-  return snapshots.docs.map((snapshot) => ({ id: snapshot.id, ...snapshot.data() }));
+  return getSubCollectionData(ref, limit);
 };
 
 const updateEmployeeSalary = (employeeRef, currentSalaryId, newSalary, isNew = true) => {
@@ -51,8 +34,8 @@ const updateEmployeeSalary = (employeeRef, currentSalaryId, newSalary, isNew = t
 
   if (isNew) {
     const currentSalaryDocRef = employeeRef
-      .collection(COLLECTION_NAMES.salary).doc(currentSalaryId);
-    const newSalaryDocRef = employeeRef.collection(COLLECTION_NAMES.salary).doc();
+      .collection(SUBCOLLECTION_NAMES.salary).doc(currentSalaryId);
+    const newSalaryDocRef = employeeRef.collection(SUBCOLLECTION_NAMES.salary).doc();
     const currentSalaryUpdate = { ref: currentSalaryDocRef, data: { dateTo: serverDate } };
     const newSalaryUpdate = {
       ref: newSalaryDocRef, data: { dateFrom: serverDate, salary: newSalary } };
@@ -60,7 +43,7 @@ const updateEmployeeSalary = (employeeRef, currentSalaryId, newSalary, isNew = t
     return { currentSalaryUpdate, newSalaryUpdate };
   }
 
-  const currentSalaryDocRef = employeeRef.collection(COLLECTION_NAMES.salary).doc(currentSalaryId);
+  const currentSalaryDocRef = employeeRef.collection(SUBCOLLECTION_NAMES.salary).doc(currentSalaryId);
   return { ref: currentSalaryDocRef, data: { salary: newSalary } };
 };
 
@@ -74,8 +57,8 @@ const updateEmployeeDepartment = (
 
   if (isNew) {
     const currentDepartmentDocRef = employeeRef
-      .collection(COLLECTION_NAMES.department).doc(currentDepartmentId);
-    const newDepartmentDocRef = employeeRef.collection(COLLECTION_NAMES.department).doc();
+      .collection(SUBCOLLECTION_NAMES.department).doc(currentDepartmentId);
+    const newDepartmentDocRef = employeeRef.collection(SUBCOLLECTION_NAMES.department).doc();
     const currentDepartmentUpdate = { ref: currentDepartmentDocRef, data: { dateTo: serverDate } };
     const newDepartmentUpdate = {
       ref: newDepartmentDocRef, data: { dateFrom: serverDate, departmentId: newDepartmentId } };
@@ -84,7 +67,7 @@ const updateEmployeeDepartment = (
   }
 
   const currentDepartmentDocRef = employeeRef
-    .collection(COLLECTION_NAMES.department).doc(currentDepartmentId);
+    .collection(SUBCOLLECTION_NAMES.department).doc(currentDepartmentId);
   return { ref: currentDepartmentDocRef, data: { departmentId: newDepartmentId } };
 };
 
@@ -93,8 +76,8 @@ const updateEmployeeJobTitle = (employeeRef, currentJobTitleId, newJobTitletId, 
 
   if (isNew) {
     const currentJobTitleDocRef = employeeRef
-      .collection(COLLECTION_NAMES.jobTitle).doc(currentJobTitleId);
-    const newJobTitleDocRef = employeeRef.collection(COLLECTION_NAMES.jobTitle).doc();
+      .collection(SUBCOLLECTION_NAMES.jobTitle).doc(currentJobTitleId);
+    const newJobTitleDocRef = employeeRef.collection(SUBCOLLECTION_NAMES.jobTitle).doc();
     const currentJobTitleUpdate = { ref: currentJobTitleDocRef, data: { dateTo: serverDate } };
     const newJobTitleUpdate = {
       ref: newJobTitleDocRef, data: { dateFrom: serverDate, titleId: newJobTitletId } };
@@ -103,14 +86,13 @@ const updateEmployeeJobTitle = (employeeRef, currentJobTitleId, newJobTitletId, 
   }
 
   const currentJobTitleDocRef = employeeRef
-    .collection(COLLECTION_NAMES.jobTitle).doc(currentJobTitleId);
+    .collection(SUBCOLLECTION_NAMES.jobTitle).doc(currentJobTitleId);
   return { ref: currentJobTitleDocRef, data: { titleId: newJobTitletId } };
 };
 
 export {
-  getEmployeeSalary,
-  getEmployeeDepartment,
-  getEmployeeJobTitle,
+  SUBCOLLECTION_NAMES,
+  getEmployeeSubCollection,
   updateEmployeeSalary,
   updateEmployeeDepartment,
   updateEmployeeJobTitle

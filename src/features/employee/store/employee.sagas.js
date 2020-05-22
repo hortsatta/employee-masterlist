@@ -1,6 +1,6 @@
 import { takeLatest, all, call, put, select } from 'redux-saga/effects';
 
-import { PAGE_MODE, PAGE_KEYS } from 'config/system.config';
+import { PageMode, pageKeys } from 'config/system.config';
 import { setNotificationError } from 'features/core/store';
 import { getPageEmployees, getEmployeesCollectionCount, getEmployeeById } from '../services';
 import {
@@ -48,7 +48,7 @@ function* onFetchInitialEmployeesStart() {
     function* ({ payload }) {
       try {
         const { pageKey, isActive, sortBy } = payload;
-        const collectionSize = yield call(getEmployeesCollectionCount, isActive);
+        const collectionSize = yield call(getEmployeesCollectionCount, isActive); 
         const employees = yield call(getPageEmployees, { field: pageKey }, isActive, sortBy);
         yield put(fetchInitialPageEmployeesSuccess(employees, collectionSize));
       } catch (errorMessage) {
@@ -77,9 +77,9 @@ function* onFetchPreviousEmployeesStart() {
           const employees = yield call(
             getPageEmployees,
             {
-              mode: PAGE_MODE.back,
+              mode: PageMode.PREVIOUS,
               field: pageKey,
-              pageKey: pageKey === PAGE_KEYS.employees.fullName
+              pageKey: pageKey === pageKeys.employees.fullName
                 ? target.pageKey.fullName : target.pageKey.hireDate
             },
             isActive,
@@ -115,9 +115,9 @@ function* onFetchNextEmployeesStart() {
           const employees = yield call(
             getPageEmployees,
             {
-              mode: PAGE_MODE.next,
+              mode: PageMode.NEXT,
               field: pageKey,
-              pageKey: pageKey === PAGE_KEYS.employees.fullName
+              pageKey: pageKey === pageKeys.employees.fullName
                 ? target.pageKey.fullName : target.pageKey.hireDate
             },
             isActive,
