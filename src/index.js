@@ -1,20 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { FocusStyleManager } from '@blueprintjs/core';
 
 import './index.scss';
+import { history } from 'common/services';
 import { store, persistor } from './features/core/store';
 import RootPage from './features/core/pages';
 
 ReactDOM.render(
   <Provider store={store}>
     <PersistGate persistor={persistor}>
-      <BrowserRouter>
+      <Router history={history}>
         <RootPage />
-      </BrowserRouter>
+      </Router>
     </PersistGate>
   </Provider>,
   // eslint-disable-next-line no-undef
