@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FormGroup, ControlGroup, NumericInput } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
@@ -7,21 +7,53 @@ import './employee-info-form.styles.scss';
 import { MomentDateInput, IconButton } from 'common/components';
 import DepartmentSelect from '../department-select/department-select.component';
 import JobTitleSelect from '../job-title-select/job-title-select.component';
+import EmployeeHistoryDialog from '../employee-history-dialog/employee-history-dialog.component';
 
 const HistoryButton = (props) => (
-  <IconButton content='View History' icon={IconNames.HISTORY} {...props} />
+  <IconButton content='View history' icon={IconNames.HISTORY} {...props} />
 );
 
 const EmployeeInfoForm = ({
   isUpdate,
   fields,
+  salaryHistory,
+  departmentHistory,
+  jobTitleHistory,
   errors,
   touched,
   handleCustomChange,
   handleBlur,
   disabled
 }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentHistory, setCurrentHistory] = useState('salary');
   const { department, jobTitle, hireDate, salary } = fields;
+
+  const historyList = {
+    salary: {
+      name: 'salary',
+      title: 'Employee Salary History',
+      list: salaryHistory
+    },
+    department: {
+      name: 'department',
+      title: 'Employee Department History',
+      list: departmentHistory
+    },
+    jobTitle: {
+      name: 'jobTitle',
+      title: 'Employee Job Title History',
+      list: jobTitleHistory
+    }
+  };
+
+  const handleDialogClose = () => setIsDialogOpen(false);
+
+  const showHistoryDialog = (history) => {
+    setCurrentHistory(history);
+    setIsDialogOpen(true);
+  };
+
   return (
     <div className='employee-info'>
       <FormGroup>
@@ -45,7 +77,7 @@ const EmployeeInfoForm = ({
               onItemSelect={(e) => { handleCustomChange({ target: { value: e, name: 'department' } }); }}
               disabled={disabled}
             />
-            {isUpdate && <HistoryButton disabled={disabled} />}
+            {isUpdate && <HistoryButton disabled={disabled} onClick={() => showHistoryDialog('department')} />}
           </ControlGroup>
         </div>
         <div className='row-2'>
@@ -63,7 +95,7 @@ const EmployeeInfoForm = ({
               disabled={disabled}
               {...(salary ? { value: salary } : {})}
             />
-            {isUpdate && <HistoryButton disabled={disabled} />}
+            {isUpdate && <HistoryButton disabled={disabled} onClick={() => showHistoryDialog('salary')} />}
           </ControlGroup>
           <ControlGroup fill>
             <JobTitleSelect
@@ -74,10 +106,17 @@ const EmployeeInfoForm = ({
               onItemSelect={(e) => handleCustomChange({ target: { value: e, name: 'jobTitle' } })}
               disabled={disabled}
             />
-            {isUpdate && <HistoryButton disabled={disabled} />}
+            {isUpdate && <HistoryButton disabled={disabled} onClick={() => showHistoryDialog('jobTitle')} />}
           </ControlGroup>
         </div>
       </FormGroup>
+      <EmployeeHistoryDialog
+        icon={IconNames.HISTORY}
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        handleClose={handleDialogClose}
+        {...historyList[currentHistory]}
+      />
     </div>
   );
 };
@@ -90,6 +129,7 @@ EmployeeInfoForm.propTypes = {
     hireDate: PropTypes.instanceOf(Date),
     salary: PropTypes.number
   }).isRequired,
+  salaryHistory: PropTypes.arrayOf(PropTypes.object),
   errors: PropTypes.shape(),
   touched: PropTypes.shape(),
   handleCustomChange: PropTypes.func.isRequired,
