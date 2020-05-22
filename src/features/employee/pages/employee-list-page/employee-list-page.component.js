@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { PAGE_KEYS } from 'config/system.config';
+import { pageKeys } from 'config/system.config';
 import { WithDelay } from 'common/containers';
 import { selectCurrentPage, selectPageEmployees, fetchInitialPageEmployeesStart } from '../../store';
 import { EmployeeListTable } from '../../components';
@@ -51,7 +51,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchInitialPageEmployeesStartDispatch: (isActive) => (
-    dispatch(fetchInitialPageEmployeesStart(PAGE_KEYS.employees.fullName, isActive, 'asc')))
+    dispatch(fetchInitialPageEmployeesStart(pageKeys.employees.fullName, isActive, 'asc')))
 });
 
 const mergeProps = ({ state, currentPage }, dispatchProps, ownProps) => ({
