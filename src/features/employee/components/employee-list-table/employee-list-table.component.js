@@ -18,12 +18,11 @@ import {
   fetchNextPageEmployeesStart,
   fetchPreviousPageEmployeesStart,
   selectCurrentPage,
-  selectIsLoading
+  selectIsPageLoading
 } from '../../store';
 
-
 const EmployeeListTable = ({
-  isLoading,
+  isPageLoading,
   departments,
   jobTitles,
   currentPage,
@@ -31,14 +30,15 @@ const EmployeeListTable = ({
   dataSource,
   fetchInitialPageEmployeesStartDispatch,
   fetchPreviousPageEmployeesStartDispatch,
-  fetchNextPageEmployeesStartDispatch
+  fetchNextPageEmployeesStartDispatch,
+  onViewClick
 }) => {
   const [sortBy, setSortBy] = useState('asc');
   const [currentPageKey, setPageKey] = useState(pageKeys.employees.fullName);
 
   const cellMenuRender = (i) => (
     <Menu>
-      <MenuItem text='View' icon={IconNames.ZOOM_IN} />
+      <MenuItem text='View' icon={IconNames.ZOOM_IN} onClick={() => onViewClick(dataSource[i].id)}/>
       <MenuItem text='Update' icon={IconNames.HIGHLIGHT} onClick={() => navigateToUpdateEmployee(dataSource[i].id)} />
       <MenuDivider />
       <MenuItem text='Remove' intent={Intent.DANGER} icon={IconNames.TRASH} />
@@ -91,7 +91,7 @@ const EmployeeListTable = ({
     <Callout className='employee-list-wrapper'>
       <DataTable
         className='employee-list-table'
-        isLoading={isLoading}
+        isLoading={isPageLoading}
         numRows={numRows}
         columns={columns}
         columnWidths={[50, 330, 250, 250, 120]}
@@ -99,7 +99,7 @@ const EmployeeListTable = ({
       />
       <DataTableFooter
         isPage
-        isLoading={isLoading}
+        isLoading={isPageLoading}
         currentPage={currentPage}
         handleRefreshClick={() => (
           fetchInitialPageEmployeesStartDispatch(currentPageKey, true, sortBy))}
@@ -113,7 +113,7 @@ const EmployeeListTable = ({
 };
 
 EmployeeListTable.propTypes = {
-  isLoading: PropTypes.bool,
+  isPageLoading: PropTypes.bool,
   departments: PropTypes.shape().isRequired,
   jobTitles: PropTypes.shape().isRequired,
   currentPage: PropTypes.shape({ index: PropTypes.number, isLast: PropTypes.bool }),
@@ -121,11 +121,12 @@ EmployeeListTable.propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.shape()),
   fetchInitialPageEmployeesStartDispatch: PropTypes.func.isRequired,
   fetchPreviousPageEmployeesStartDispatch: PropTypes.func.isRequired,
-  fetchNextPageEmployeesStartDispatch: PropTypes.func.isRequired
+  fetchNextPageEmployeesStartDispatch: PropTypes.func.isRequired,
+  onViewClick: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
-  isLoading: selectIsLoading,
+  isPageLoading: selectIsPageLoading,
   departments: selectAllDepartmentsObj,
   jobTitles: selectAllJobTitlesObj,
   currentPage: selectCurrentPage()

@@ -9,7 +9,7 @@ import { WithDelay, WithProcessing } from 'common/containers';
 import { WithSpinner } from 'common/components';
 import { selectIsLoading as selectIsDepartmentLoading } from 'features/department/store';
 import { selectIsLoading as selectIsJobTitleLoading } from 'features/job-title/store';
-import { selectEmployee, fetchEmployeeStart, selectIsLoading as selectIsEmployeeLoading } from '../../store';
+import { selectEmployee, fetchEmployeeStart, selectIsEmployeeLoading } from '../../store';
 import { UpserEmployeeForm } from '../../components';
 
 const UpsertEmployeePage = ({

@@ -23,9 +23,14 @@ const selectCurrentPageKey = createSelector(
   (employeeState) => employeeState.currentPagekey
 );
 
-const selectIsLoading = createSelector(
+const selectIsEmployeeLoading = createSelector(
   [selectEmployeeState],
-  (employeeState) => employeeState.isLoading
+  (employeeState) => employeeState.selectIsEmployeeLoading
+);
+
+const selectIsPageLoading = createSelector(
+  [selectEmployeeState],
+  (employeeState) => employeeState.isPageLoading
 );
 
 export {
@@ -33,5 +38,6 @@ export {
   selectPageEmployees,
   selectCurrentPage,
   selectCurrentPageKey,
-  selectIsLoading
+  selectIsEmployeeLoading,
+  selectIsPageLoading
 };
