@@ -1,12 +1,41 @@
 .personal-info-view {
+  & > .bp3-divider {
+    margin: 1.5rem 0 1rem 0;
+  }
+
   .profile-picture {
-    margin: 0 auto 22px auto;
+    position: relative;
+    margin: 8px auto 0 auto;
     width: 200px;
     height: 200px;
     background-color: #fff;
     border: 1px solid rgba(0,0,0,0.2);
     border-radius: 3px;
     overflow: hidden;
+
+    &.loading {
+      filter: grayscale(1);
+
+      &:before,
+      .bp3-spinner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+
+      &:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.3);
+      }
+    }
 
     img {
       width: 100%;

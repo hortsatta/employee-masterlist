@@ -1,4 +1,6 @@
 import React from 'react';
+import { Divider, Spinner } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 
 import './personal-info-view.styles.scss';
 import employeePlaceholder from 'assets/employee-placeholder.png';
@@ -10,8 +12,8 @@ const genderPictureSrc = {
   male: employeePlaceholder2
 };
 
-const PersonalInfoView = ({ employee }) => {
-  const { personalInfo } = employee || {};
+const PersonalInfoView = ({ isLoading, employee = {} }) => {
+  const { personalInfo } = employee;
   const {
     firstName,
     middleInitial,
@@ -27,28 +29,49 @@ const PersonalInfoView = ({ employee }) => {
 
   return (
     <div className='personal-info-view'>
-      <div className='profile-picture'>
-        <img src={picture || genderPictureSrc[gender?.toLowerCase()]} alt='employee-profile' />
+      <div className={`profile-picture ${isLoading ? 'loading' : ''}`}>
+        {isLoading && <Spinner size={Spinner.SIZE_LARGE} />}
+        <img src={picture || genderPictureSrc[gender?.toLowerCase() || 'female']} alt='employee-profile' />
       </div>
+      <Divider />
       <div className='fields'>
-        <TextField className='row-2' label='First Name'>{firstName}</TextField>
-        <TextField className='row-2' label='Last Name'>{lastName}</TextField>
-        <TextField className='row-3' label='Middle Initial'>{middleInitial}</TextField>
-        <TextField className='row-3' label='Gender'>{gender}</TextField>
-        <TextField className='row-3' label='Birthday'>{birthDate?.date}</TextField>
-        <TextField label='Current Address'>{currentAddress}</TextField>
-        <TextField label='Home Address'>{homeAddress}</TextField>
-        <TextField label='Phones'>
+        <TextField loading={isLoading} className='row-2' label='First Name'>
+          {firstName}
+        </TextField>
+        <TextField loading={isLoading} className='row-2' label='Last Name'>
+          {lastName}
+        </TextField>
+        <TextField loading={isLoading} className='row-3' label='Middle Initial'>
+          {middleInitial}
+          </TextField>
+        <TextField loading={isLoading} className='row-3' label='Gender'>
+          {gender}
+        </TextField>
+        <TextField loading={isLoading} className='row-3' label='Birthday'>
+          {birthDate?.date}
+        </TextField>
+        <TextField loading={isLoading} label='Current Address'>
+          {currentAddress}
+        </TextField>
+        <TextField loading={isLoading} label='Home Address'>
+          {homeAddress}
+        </TextField>
+        <TextField loading={isLoading} label={phones && phones.length > 1 ? 'Phones' : 'Phone'}>
           {phones && phones.map((phone, i) => (
             <div key={`phone-${i}`}>{phone}</div>))}
         </TextField>
-        <TextField label='Emails'>
+        <TextField loading={isLoading} label={emails && emails.length > 1 ? 'Emails' : 'Email'}>
           {emails && emails.map((email, i) => (
             <div key={`email-${i}`}>{email}</div>))}
         </TextField>
       </div>
     </div>
   );
+};
+
+PersonalInfoView.propTypes = {
+  isLoading: PropTypes.bool,
+  employee: PropTypes.shape()
 };
 
 export default PersonalInfoView;

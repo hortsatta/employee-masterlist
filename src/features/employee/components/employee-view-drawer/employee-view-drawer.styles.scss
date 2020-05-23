@@ -2,5 +2,9 @@
   .bp3-callout {
     padding: 1rem;
     height: 100%;
+
+    & > .bp3-divider {
+      margin: 1rem 0;
+    }
   }
 }
