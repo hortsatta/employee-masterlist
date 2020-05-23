@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Drawer, Callout, Divider, Spinner } from '@blueprintjs/core';
+import { Drawer, Callout, Divider } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
 
 import './employee-view-drawer.styles.scss';
