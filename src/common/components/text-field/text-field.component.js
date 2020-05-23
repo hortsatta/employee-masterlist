@@ -7,14 +7,15 @@ import './text-field.styles.scss';
 import { selectDarkMode } from 'features/core/store';
 import { connect } from 'react-redux';
 
-const TextField = ({ darkMode, className, label, children }) => (
+const TextField = ({ loading, darkMode, className, label, children }) => (
   <div className={`text-field ${className} ${darkMode ? 'bp3-dark' : ''}`}>
-    <Text>{children}</Text>
+    <Text className={loading ? 'bp3-skeleton' : ''}>{children || 'lorem ipsum'}</Text>
     <small className='label'>{label}</small>
   </div>
 );
 
 TextField.propTypes = {
+  loading: PropTypes.bool,
   darkMode: PropTypes.bool,
   className: PropTypes.string,
   label: PropTypes.string,
