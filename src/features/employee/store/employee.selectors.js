@@ -25,7 +25,7 @@ const selectCurrentPageKey = createSelector(
 
 const selectIsEmployeeLoading = createSelector(
   [selectEmployeeState],
-  (employeeState) => employeeState.selectIsEmployeeLoading
+  (employeeState) => employeeState.isEmployeeLoading
 );
 
 const selectIsPageLoading = createSelector(
