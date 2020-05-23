@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { pageKeys } from 'config/system.config';
 import { WithDelay } from 'common/containers';
 import { selectCurrentPage, selectPageEmployees, fetchInitialPageEmployeesStart } from '../../store';
-import { EmployeeListTable } from '../../components';
+import { EmployeeListTable, EmployeeViewDrawer } from '../../components';
 
 const EMPLOYEES_PLACEHOLDER = [...Array(7)].map(() => ({
   personalInfo: {
@@ -22,17 +22,31 @@ const EmployeeListPage = ({
   employees,
   fetchInitialPageEmployeesStartDispatch
 }) => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [employeeId, setEmployeeId] = useState('');
+
   useEffect(() => {
     if (currentPageIndex === 0 && !employees) {
       fetchInitialPageEmployeesStartDispatch(true);
     }
   }, [currentPageIndex, employees, fetchInitialPageEmployeesStartDispatch]);
 
+  const handleEmployeeView = (id) => {
+    setIsDrawerOpen(true);
+    setEmployeeId(id);
+  };
+
   return (
     <div className='employee-list-page'>
       <EmployeeListTable
         numRows={employees ? employees.length : EMPLOYEES_PLACEHOLDER.length}
         dataSource={employees || EMPLOYEES_PLACEHOLDER}
+        onViewClick={handleEmployeeView}
+      />
+      <EmployeeViewDrawer
+        employeeId={employeeId}
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
       />
     </div>
   );
