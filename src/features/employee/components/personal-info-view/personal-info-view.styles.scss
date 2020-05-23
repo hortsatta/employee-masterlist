@@ -1,0 +1,38 @@
+.personal-info-view {
+  .profile-picture {
+    margin: 0 auto 22px auto;
+    width: 200px;
+    height: 200px;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 3px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .fields {
+    display: flex;
+    flex-wrap: wrap;
+
+    & > .text-field {
+      flex: 0 0 100%;
+
+      &:not(:last-child) {
+        margin-bottom: 1rem;
+      }
+
+      &.row-2 {
+        flex: 0 0 50%;
+      }
+
+      &.row-3 {
+        flex: 0 0 33.33%;
+      }
+    }
+  }
+}
