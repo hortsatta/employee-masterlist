@@ -10,6 +10,7 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case AuthActionTypes.CHECK_SIGN_IN_SESSION:
     case AuthActionTypes.SIGN_IN_START:
       return {
         ...state,
