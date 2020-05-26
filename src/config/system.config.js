@@ -1,8 +1,14 @@
 import { IconNames } from '@blueprintjs/icons';
 
-import { employees, options } from './rbac/rbac.types';
+import { home, employees, options } from './rbac/rbac.types';
 
 const links = {
+  home: {
+    icon: IconNames.COMPASS,
+    text: 'Home',
+    to: '/',
+    rules: [home.READ]
+  },
   employees: {
     icon: IconNames.PEOPLE,
     text: 'Employees',
