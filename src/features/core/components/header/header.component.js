@@ -4,11 +4,13 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { H1 } from '@blueprintjs/core';
+import { H1, H4 } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
 
 import './header.styles.scss';
 import styles from 'common/styles/styles.scss';
+import github from 'assets/github.png'
+import githubDark from 'assets/github-dark.png'
 import { pageTitles } from 'config/system.config';
 import { selectExpandSideNav, selectDarkMode } from '../../store';
 
@@ -44,9 +46,20 @@ const Header = ({ expandSideNav, darkMode, pageTitle }) => {
         <title>{[pageTitle?.title, pageTitles.app.title].filter(Boolean).join(' — ')}</title>
       </Helmet>
       <div className='page-title'>
-        <H1>{pageTitle?.title}</H1>
+        <H1 className={Object.keys(pageTitle).length ? '' : 'empty'}>{pageTitle?.title}</H1>
         {pageTitle?.subtitle && (<small>{pageTitle?.subtitle}</small>)}
       </div>
+      <a
+        className='github-link'
+        href='https://github.com/hortsatta/employee-masterlist'
+        target='_blank'
+        rel="noopener noreferrer" 
+      >
+        <img src={darkMode ? githubDark : github} alt='github' />
+        <div>
+            <H4>{process.env.REACT_APP_NAME}</H4>
+        </div>
+      </a>
     </header>
   );
 };

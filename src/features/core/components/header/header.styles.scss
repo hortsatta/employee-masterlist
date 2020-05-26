@@ -4,14 +4,23 @@ header.main-header {
   position: fixed;
   top:0;
   left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding-top: 1rem;
   padding-bottom: 1rem;
-  padding-right: 1rem;
+  padding-right: 32px;
   width: 100%;
   transition: 0.2s padding ease;
   z-index: 10;
 
-  &.bp3-dark { background-color: $darkColorBg; }
+  &.bp3-dark {
+    background-color: $darkColorBg;
+
+    a.github-link:hover {
+      background: rgba(255,255,255,0.1);
+    }
+  }
 
   .page-title {
     padding-left: 2rem;
@@ -20,15 +29,38 @@ header.main-header {
 
     h1.bp3-heading {
       margin: 0;
-      font-family: 'Poiret One', cursive;
       font-size: 28px;
 
-      &:after {
+      &:not(.empty):after {
         content: '/';
         margin: 0 0.5rem;
         font-weight: 400;
         opacity: 0.5;
       }
+    }
+  }
+
+  a.github-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 16px;
+    border-radius: 3px;
+    text-decoration: none;
+
+    &:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    img {
+      margin-right: 8px;
+      width: 24px;
+    }
+
+    h4 {
+      margin: 0;
+      font-family: 'Poiret One', cursive;
+      font-size: 14px;
+      line-height: 1.4;
     }
   }
 }
