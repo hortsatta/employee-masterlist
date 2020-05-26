@@ -24,6 +24,10 @@ body {
     box-sizing: border-box;
   }
 
+  h1.bp3-heading {
+    font-family: 'Poiret One', cursive;
+  }
+
   .custom-link {
     color: #48AFF0;
     cursor: pointer;
@@ -74,11 +78,21 @@ body {
     .bp3-popover-content .bp3-menu .bp3-menu-item.active {
       background-color:rgba(19, 124, 189, 0.5);
     }
-  } 
+  }
+
+  .search-tooltip {
+    width: 400px;
+  }
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.headShake {
+  animation-timing-function: ease-in-out;
+  animation-name: headShake;
+  animation-duration: 0.8s;
 }
 
 @keyframes headShake {
@@ -107,8 +121,40 @@ code {
   }
 }
 
-.headShake {
-  animation-timing-function: ease-in-out;
-  animation-name: headShake;
-  animation-duration: 0.8s;
+@keyframes bounceIn {
+  from,
+  20%,
+  40%,
+  60%,
+  80%,
+  to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  0% {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 0.3);
+  }
+
+  20% {
+    transform: scale3d(1.1, 1.1, 1.1);
+  }
+
+  40% {
+    transform: scale3d(0.9, 0.9, 0.9);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale3d(1.03, 1.03, 1.03);
+  }
+
+  80% {
+    transform: scale3d(0.97, 0.97, 0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
 }

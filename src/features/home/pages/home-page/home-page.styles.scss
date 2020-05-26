@@ -1,0 +1,143 @@
+.home-page {
+  padding-top: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+
+  .app-logo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    text-align: center;
+    transform: translateY(130px);
+
+    &.rise {
+      animation-duration: 1s;
+      animation-name: riseUp; 
+      animation-fill-mode: forwards;
+      animation-timing-function: ease;
+    }
+
+    img {
+      position: absolute;
+      top: 3px;
+      left: 234px;
+      width: 160px;
+    }
+
+    h1.bp3-heading {
+      font-size: 70px;
+      font-weight: 400;
+      line-height: 1;
+
+      b {
+        display: block;
+        font-family: 'Poiret One', cursive;
+      }
+    }
+  }
+
+  .divider {
+    margin-bottom: 40px;
+    position: relative;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    opacity: 0;
+
+    &.show {
+      animation-delay: 1s;
+      animation-duration: 1.2s;
+      animation-name: bounceIn;
+      animation-fill-mode: forwards;
+    }
+
+    &:before, &:after {
+      content: "";
+      position: absolute;
+      width: 1px;
+      height: 100%;
+      border-right: 1px solid;
+    }
+
+    &:before {
+      transform: rotate(45deg);
+    }
+
+    &:after {
+      transform: rotate(-45deg);
+    }
+  }
+
+  .newly-hired {
+    text-align: center;
+    opacity: 0;
+
+    &.show {
+      animation-delay: 1s;
+      animation-duration: 1.2s;
+      animation-name: bounceIn;
+      animation-fill-mode: forwards;
+    }
+
+    & > .employee {
+      padding: 1.6rem 1rem 1rem 1rem;
+      background-color: rgba(0,0,0,0.2);
+      border-top: 1px solid #e2b307;
+      border-bottom: 1px solid #e2b307;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    h4.award-title {
+      margin-bottom: 0;
+      padding: 0 22px 6px 22px;
+      color: #e2b307;
+      font-family: 'Poiret One', cursive;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .employee-picture {
+      position: relative;
+      display: inline-block;
+      width: 160px;
+      height: 160px;
+      border: 2px solid #e2b307;
+      border-radius: 3px;
+
+      img {
+        &.sparkle {
+          position: absolute;
+          right: -16px;
+          top: -18px;
+          width: 60px;
+        }
+
+        &.employee {
+          width: 100%;
+        }
+      }
+    }
+
+    .employee-details {
+      margin-top: 12px;
+
+      h4.bp3-heading {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+@keyframes riseUp {
+  from { transform: translateY(130px); }
+  to { transform: translateY(0px); }
+}
