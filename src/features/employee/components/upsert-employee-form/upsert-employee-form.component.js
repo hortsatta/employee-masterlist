@@ -9,6 +9,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 
 import './upsert-employee-form.styles.scss';
+import { pageKeys } from 'config/system.config';
 import { navigateToEmployeeList } from 'common/services';
 import { usePrevious } from 'common/custom-hooks';
 import { generateJimp } from 'common/utils';
@@ -16,7 +17,9 @@ import { setNotificationError, setNotificationSuccess } from 'features/core/stor
 import { selectAllDepartmentsObj } from 'features/department/store';
 import { selectAllJobTitlesObj } from 'features/job-title/store';
 import { createEmployeeDocument, updateEmployeeDocument } from '../../services';
-import { EmployeeInfoForm, PersonalInfoForm } from '..';
+import { fetchInitialPageEmployeesStart } from '../../store';
+import EmployeeInfoForm from '../employee-info-form/employee-info-form.component';
+import PersonalInfoForm from '../personal-info-form/personal-info-form.component';
 
 const PopoverConfirm = ({ handleCancel, handleSubmit }) => (
   <div className='popover popover-confirm'>
@@ -48,11 +51,18 @@ const UpsertEmployeeForm = ({
   jobTitles,
   isUpdate = false,
   setNotificationSuccessDispatch,
-  setNotificationErrorDispatch
+  setNotificationErrorDispatch,
+  fetchInitialPageEmployeesStartDispatch,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
   const [resetAnimation, setResetAnimation] = useState('');
+
+  const executeFinalStep = () => {
+    fetchInitialPageEmployeesStartDispatch(true);
+    setTimeout(() => navigateToEmployeeList(), 500);
+  };
+
   const formik = useFormik({
     // Form fields validation using Yup
     validationSchema: Yup.object().shape({
@@ -108,6 +118,7 @@ const UpsertEmployeeForm = ({
           : await createEmployeeDocument(values);
         setIsLoading(false);
         setNotificationSuccessDispatch(`Employee ${values.firstName} successfully enrolled.`);
+        executeFinalStep();
       } catch (errorMessage) {
         setIsLoading(false);
         setNotificationErrorDispatch(errorMessage);
@@ -296,7 +307,8 @@ UpsertEmployeeForm.propTypes = {
   employee: PropTypes.shape(),
   isUpdate: PropTypes.bool,
   setNotificationSuccessDispatch: PropTypes.func.isRequired,
-  setNotificationErrorDispatch: PropTypes.func.isRequired
+  setNotificationErrorDispatch: PropTypes.func.isRequired,
+  fetchInitialPageEmployeesStartDispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -306,7 +318,9 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = (dispatch) => ({
   setNotificationSuccessDispatch: (message) => dispatch(setNotificationSuccess(message)),
-  setNotificationErrorDispatch: (errorMessage) => dispatch(setNotificationError(errorMessage))
+  setNotificationErrorDispatch: (errorMessage) => dispatch(setNotificationError(errorMessage)),
+  fetchInitialPageEmployeesStartDispatch: (isActive) => (
+    dispatch(fetchInitialPageEmployeesStart(pageKeys.employees.fullName, isActive, 'asc'))),
 });
 
 export default connect(
