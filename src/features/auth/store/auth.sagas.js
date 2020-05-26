@@ -52,7 +52,7 @@ function* onCheckSignInSession() {
     AuthActionTypes.CHECK_SIGN_IN_SESSION,
     function* () {
       try {
-        const { uid } = yield getCurrentUser(); console.log('userAuth', uid);
+        const { uid } = yield getCurrentUser();
         const userSnapshot = yield call(getUserSnapshotById, uid);
         yield put(signInSuccess(userSnapshot.data()));
       } catch (errorMessage) {
