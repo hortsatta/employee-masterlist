@@ -17,10 +17,7 @@ import {
   selectIsLoading
 } from 'features/auth/store';
 import { selectIsLoading as selectIsUserAccountLoading, selectAllUserRolesObj } from 'features/user-account/store';
-import {
-  selectAllJobTitlesObj,
-  fetchJobTitlesByDepartmentIdsStart
-} from 'features/job-title/store';
+import { selectAllJobTitlesObj } from 'features/job-title/store';
 
 const genderPictureSrc = {
   female: employeePlaceholder,
@@ -86,7 +83,6 @@ const ProfileNav = ({
   jobTitles,
   toggleSignInDialogDispatch,
   fetchCurrentEmployeeStartDispatch,
-  fetchJobTitlesByDepartmentIdsStartDispatch,
   signOut
 }) => {
   useEffect(() => {
@@ -95,12 +91,6 @@ const ProfileNav = ({
       fetchCurrentEmployeeStartDispatch(currentUser.employeeId);
     }
   }, [currentUser, currentEmployee, fetchCurrentEmployeeStartDispatch]);
-
-  useEffect(() => {
-    if (!currentEmployee || Object.keys(jobTitles).length) { return; }
-    const { department: { departmentId } } = currentEmployee;
-    fetchJobTitlesByDepartmentIdsStartDispatch([departmentId]);
-  }, [currentEmployee, fetchJobTitlesByDepartmentIdsStartDispatch]);
 
   const profileRenderer = () => (
     currentEmployee
@@ -155,7 +145,6 @@ ProfileNav.propTypes = {
   jobTitles: PropTypes.shape(),
   toggleSignInDialogDispatch: PropTypes.func.isRequired,
   fetchCurrentEmployeeStartDispatch: PropTypes.func.isRequired,
-  fetchJobTitlesByDepartmentIdsStartDispatch: PropTypes.func.isRequired
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -171,8 +160,6 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = (dispatch) => ({
   toggleSignInDialogDispatch: () => dispatch(toggleSignInDialog()),
   fetchCurrentEmployeeStartDispatch: (id) => dispatch(fetchCurrentEmployeeStart(id)),
-  fetchJobTitlesByDepartmentIdsStartDispatch: (ids) => (
-    dispatch(fetchJobTitlesByDepartmentIdsStart(ids))),
   signOut: () => dispatch(signOutStart())
 });
 

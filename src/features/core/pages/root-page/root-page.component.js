@@ -12,6 +12,8 @@ import { LoadingBar } from 'common/components';
 import { SignInDialog } from 'features/auth/containers';
 import { checkSignInSession, selectCurrentUser } from 'features/auth/store';
 import { fetchAllUserRolesStart } from 'features/user-account/store';
+import { fetchAllDepartmentsStart, selectAllDepartments } from 'features/department/store';
+import { fetchJobTitlesByDepartmentIdsStart } from 'features/job-title/store';
 import RootRoutes from '../../root-routes';
 import {
   Header,
@@ -21,16 +23,6 @@ import {
   MainSection,
   SideNavbar
 } from '../../components';
-
-// const tempFunc = async () => {
-//   await signUpUser({
-//     email: 'hortsatta@gmail.com',
-//     password: 'qwerty990',
-//     employeeId: 0,
-//     userRoleId: 2
-//   });
-//   alert('Done');
-// };
 
 const navItemRenderer = ({ currentUser, key, to, rules, children, ...otherProps }) => (
   !children
@@ -61,7 +53,14 @@ const navItemRenderer = ({ currentUser, key, to, rules, children, ...otherProps 
     )
 );
 
-const RootPage = ({ currentUser, checkSignInSessionDispatch, fetchAllUserRolesStartDispatch }) => {
+const RootPage = ({
+  currentUser,
+  departments,
+  checkSignInSessionDispatch,
+  fetchAllUserRolesStartDispatch,
+  fetchAllDepartmentsStartDispatch,
+  fetchJobTitlesByDepartmentIdsStartDispatch
+}) => {
   useEffect(() => {
     checkSignInSessionDispatch();
   }, [checkSignInSessionDispatch]);
@@ -69,6 +68,16 @@ const RootPage = ({ currentUser, checkSignInSessionDispatch, fetchAllUserRolesSt
   useEffect(() => {
     fetchAllUserRolesStartDispatch();
   }, [fetchAllUserRolesStartDispatch]);
+
+  useEffect(() => {
+    fetchAllDepartmentsStartDispatch();
+  }, [fetchAllDepartmentsStartDispatch]);
+
+  useEffect(() => {
+    if (!departments) return;
+    const ids = departments.map((department) => department.id);
+    fetchJobTitlesByDepartmentIdsStartDispatch(ids);
+  }, [departments, fetchJobTitlesByDepartmentIdsStartDispatch]);
 
   // Create elements with menu links from config file
   const navItems = menuLinks.map(({ icon, text, to, rules, children }, i) => {
@@ -112,18 +121,25 @@ const RootPage = ({ currentUser, checkSignInSessionDispatch, fetchAllUserRolesSt
 };
 
 RootPage.propTypes = {
+  currentUser: PropTypes.shape(),
+  departments: PropTypes.arrayOf(PropTypes.object),
   checkSignInSessionDispatch: PropTypes.func.isRequired,
   fetchAllUserRolesStartDispatch: PropTypes.func.isRequired,
-  currentUser: PropTypes.shape()
+  fetchAllDepartmentsStartDispatch: PropTypes.func.isRequired,
+  fetchJobTitlesByDepartmentIdsStartDispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser
+  currentUser: selectCurrentUser,
+  departments: selectAllDepartments
 });
 
 const mapDispatchToProps = (dispatch) => ({
   checkSignInSessionDispatch: () => dispatch(checkSignInSession()),
-  fetchAllUserRolesStartDispatch: () => dispatch(fetchAllUserRolesStart(true))
+  fetchAllUserRolesStartDispatch: () => dispatch(fetchAllUserRolesStart(true)),
+  fetchAllDepartmentsStartDispatch: () => dispatch(fetchAllDepartmentsStart()),
+  fetchJobTitlesByDepartmentIdsStartDispatch: (ids) => (
+    dispatch(fetchJobTitlesByDepartmentIdsStart(ids)))
 });
 
 export default connect(
