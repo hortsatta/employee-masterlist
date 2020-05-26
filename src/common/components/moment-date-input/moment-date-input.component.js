@@ -25,6 +25,7 @@ const MomentDateInput = (props) => {
 
   return (
     <DateInput
+      minDate={new Date(1900, 1, 1)}
       ref={dateInputEl}
       rightElement={calendarButton}
       {...getMomentFormatter('MM/DD/YYYY')}
