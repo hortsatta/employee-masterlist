@@ -31,7 +31,7 @@ const PersonalInfoView = ({ isLoading, employee = {} }) => {
     <div className='personal-info-view'>
       <div className={`profile-picture ${isLoading ? 'loading' : ''}`}>
         {isLoading && <Spinner size={Spinner.SIZE_LARGE} />}
-        <img src={picture || genderPictureSrc[gender?.toLowerCase() || 'female']} alt='employee-profile' />
+        <img src={picture || genderPictureSrc[gender?.toLowerCase() || 'female']} alt='employee' />
       </div>
       <Divider />
       <div className='fields'>

@@ -10,7 +10,7 @@ import employeePlaceholder from 'assets/employee-placeholder.png';
 import employeePlaceholder2 from 'assets/employee-placeholder-2.png';
 import { pageKeys } from 'config/system.config';
 import { navigateToUpdateEmployee } from 'common/services';
-import { DataTable, DataTableFooter } from 'common/components';
+import { DataTable, DataTableHeader, DataTableFooter, IconButton } from 'common/components';
 import { selectAllDepartmentsObj } from 'features/department/store';
 import { selectAllJobTitlesObj } from 'features/job-title/store';
 import {
@@ -18,8 +18,21 @@ import {
   fetchNextPageEmployeesStart,
   fetchPreviousPageEmployeesStart,
   selectCurrentPage,
-  selectIsPageLoading
+  selectIsPageLoading,
+  fetchEmployeesByKeywordStart
 } from '../../store';
+
+const infoButton = (
+  <IconButton
+    popoverClassName='search-tooltip'
+    minimal
+    content='Due to firestore&#39;s nature, searching is strict and limited to first name only;
+      And results are stored on a single page (data table&#39;s pagination is disabled).'
+    contentIntent={Intent.WARNING}
+    icon={IconNames.ISSUE}
+    intent={Intent.WARNING}
+  />
+);
 
 const EmployeeListTable = ({
   isPageLoading,
@@ -28,6 +41,7 @@ const EmployeeListTable = ({
   currentPage,
   numRows,
   dataSource,
+  fetchEmployeesByKeywordStartDispatch,
   fetchInitialPageEmployeesStartDispatch,
   fetchPreviousPageEmployeesStartDispatch,
   fetchNextPageEmployeesStartDispatch,
@@ -35,6 +49,7 @@ const EmployeeListTable = ({
 }) => {
   const [sortBy, setSortBy] = useState('asc');
   const [currentPageKey, setPageKey] = useState(pageKeys.employees.fullName);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   const cellMenuRender = (i) => (
     <Menu>
@@ -45,6 +60,12 @@ const EmployeeListTable = ({
     </Menu>
   );
 
+  const generateImgSrc = (index) => {
+    const { gender, thumb } = dataSource[index].personalInfo;
+    if (thumb) { return thumb; }
+    return gender.toLowerCase() === 'male' ? employeePlaceholder2 : employeePlaceholder;
+  };
+
   const handleSorting = (isAsc, pageKey) => {
     const sort = isAsc ? 'asc' : 'desc';
     setSortBy(sort);
@@ -52,10 +73,18 @@ const EmployeeListTable = ({
     fetchInitialPageEmployeesStartDispatch(pageKey, true, sort);
   };
 
-  const generateImgSrc = (index) => {
-    const { gender, thumb } = dataSource[index].personalInfo;
-    if (thumb) { return thumb; }
-    return gender.toLowerCase() === 'male' ? employeePlaceholder2 : employeePlaceholder;
+  const handleSearchChange = (keyword) => {
+    setSearchKeyword(keyword);
+    fetchEmployeesByKeywordStartDispatch(keyword, currentPageKey, true, sortBy);
+  };
+
+  const handleRefresh = () => {
+    if (searchKeyword.length) {
+      fetchEmployeesByKeywordStartDispatch(searchKeyword, currentPageKey, true, sortBy);
+      return;
+    }
+
+    fetchInitialPageEmployeesStartDispatch(currentPageKey, true, sortBy);
   };
 
   const columns = [
@@ -63,7 +92,7 @@ const EmployeeListTable = ({
       name: (<Icon icon={IconNames.MUGSHOT} />),
       cellData: (rowIndex) => (
         <img
-          className={dataSource[rowIndex].personalInfo.thumb ? '' : 'placeholder'}
+          className={dataSource[rowIndex].personalInfo?.thumb ? '' : 'placeholder'}
           src={generateImgSrc(rowIndex)}
           alt='employee-thumb'
         />
@@ -74,21 +103,25 @@ const EmployeeListTable = ({
       handleSorting: (isAsc) => handleSorting(isAsc, pageKeys.employees.fullName)
     }, {
       name: 'Title',
-      cellData: (rowIndex) => jobTitles[dataSource[rowIndex].jobTitle.titleId.toLowerCase()]?.name
+      cellData: (rowIndex) => jobTitles[dataSource[rowIndex].jobTitle?.titleId?.toLowerCase()]?.name
     }, {
       name: 'Department',
       cellData: (rowIndex) => (
-        departments[dataSource[rowIndex].department.departmentId.toLowerCase()]?.alias
+        departments[dataSource[rowIndex].department?.departmentId?.toLowerCase()]?.alias
       )
     }, {
       name: 'Date Hired',
-      cellData: (rowIndex) => dataSource[rowIndex].hireDate.date,
+      cellData: (rowIndex) => dataSource[rowIndex].hireDate?.date,
       handleSorting: (isAsc) => handleSorting(isAsc, pageKeys.employees.hireDate)
     }
   ];
 
   return (
     <Callout className='employee-list-wrapper'>
+      <DataTableHeader
+        rightElement={infoButton}
+        onSearchChange={(keyword) => handleSearchChange(keyword)}
+      />
       <DataTable
         className='employee-list-table'
         isLoading={isPageLoading}
@@ -101,8 +134,7 @@ const EmployeeListTable = ({
         isPage
         isLoading={isPageLoading}
         currentPage={currentPage}
-        handleRefreshClick={() => (
-          fetchInitialPageEmployeesStartDispatch(currentPageKey, true, sortBy))}
+        handleRefreshClick={handleRefresh}
         handlePreviousPageClick={() => (
           fetchPreviousPageEmployeesStartDispatch(currentPageKey, true, sortBy))}
         handleNextPageClick={() => (
@@ -119,6 +151,7 @@ EmployeeListTable.propTypes = {
   currentPage: PropTypes.shape({ index: PropTypes.number, isLast: PropTypes.bool }),
   numRows: PropTypes.number,
   dataSource: PropTypes.arrayOf(PropTypes.shape()),
+  fetchEmployeesByKeywordStartDispatch: PropTypes.func.isRequired,
   fetchInitialPageEmployeesStartDispatch: PropTypes.func.isRequired,
   fetchPreviousPageEmployeesStartDispatch: PropTypes.func.isRequired,
   fetchNextPageEmployeesStartDispatch: PropTypes.func.isRequired,
@@ -133,6 +166,8 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  fetchEmployeesByKeywordStartDispatch: (keyword, pageKey, isActive, sortBy) =>
+    (dispatch(fetchEmployeesByKeywordStart(keyword, pageKey, isActive, sortBy))),
   fetchInitialPageEmployeesStartDispatch: (pageKey, isActive, sortBy) => (
     dispatch(fetchInitialPageEmployeesStart(pageKey, isActive, sortBy))),
   fetchPreviousPageEmployeesStartDispatch: (pageKey, isActive, sortBy) => (
