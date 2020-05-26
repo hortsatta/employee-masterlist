@@ -5,7 +5,7 @@ const convertMapToObj = (list, field, isArray = false) => (
     const key = (typeof item[field] === 'string') ? item[field].toLowerCase() : item[field];
 
     if (!acc[key]) {
-      acc[key] = isArray ? [] : item;
+      acc[key] = isArray ? [item] : item;
     } else {
       acc[key] = [...acc[key], item];
     }
