@@ -1,4 +1,5 @@
 export { default as DataTable } from './data-table/data-table.component';
+export { default as DataTableHeader } from './data-table-header/data-table-header.component';
 export { default as DataTableFooter } from './data-table-footer/data-table-footer.component';
 export { default as EmptyResult } from './empty-result/empty-result.component';
 export { default as IconButton } from './icon-button/icon-button.component';
