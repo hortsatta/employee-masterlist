@@ -4,6 +4,7 @@ const INITIAL_STATE = {
   isPageLoading: false,
   isEmployeeLoading: false,
   employee: undefined,
+  newlyHiredEmployee: undefined,
   pageEmployees: undefined,
   collectionSize: undefined,
   currentPage: { index: 0, isLast: true }
@@ -12,10 +13,12 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case EmployeeActionTypes.FETCH_EMPLOYEE_START:
+    case EmployeeActionTypes.FETCH_NEWLY_HIRED_EMPLOYEE_START:
       return {
         ...state,
         isEmployeeLoading: true
       };
+    case EmployeeActionTypes.FETCH_EMPLOYEES_BY_KEYWORD_START:
     case EmployeeActionTypes.FETCH_INITIAL_PAGE_EMPLOYEES_START:
     case EmployeeActionTypes.FETCH_PREVIOUS_PAGE_EMPLOYEES_START:
     case EmployeeActionTypes.FETCH_NEXT_PAGE_EMPLOYEES_START:
@@ -28,6 +31,20 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         isEmployeeLoading: false,
         employee: action.payload
+      };
+    case EmployeeActionTypes.FETCH_NEWLY_HIRED_EMPLOYEE_SUCCESS:
+      return {
+        ...state,
+        isEmployeeLoading: false,
+        newlyHiredEmployee: action.payload
+      };
+    case EmployeeActionTypes.FETCH_EMPLOYEES_BY_KEYWORD_SUCCESS:
+      return {
+        ...state,
+        isPageLoading: false,
+        pageEmployees: { 1: action.payload },
+        collectionSize: action.payload.length,
+        currentPage: { index: 1, isLast: true }
       };
     case EmployeeActionTypes.FETCH_INITIAL_PAGE_EMPLOYEES_SUCCESS: {
       const { employees, collectionSize } = action.payload;
@@ -65,10 +82,13 @@ export default (state = INITIAL_STATE, action) => {
       };
     }
     case EmployeeActionTypes.FETCH_EMPLOYEE_FAILURE:
+    case EmployeeActionTypes.FETCH_NEWLY_HIRED_EMPLOYEE_FAILURE:
       return {
         ...state,
         isEmployeeLoading: false
       };
+    case EmployeeActionTypes.FETCH_EMPLOYEES_BY_KEYWORD_CANCELLED:
+    case EmployeeActionTypes.FETCH_EMPLOYEES_BY_KEYWORD_FALURE:
     case EmployeeActionTypes.FETCH_PAGE_EMPLOYEES_FAILURE:
       return {
         ...state,

@@ -255,6 +255,38 @@ const updateEmployeeDocument = async (newEmployee, currentEmployee) => {
   }
 };
 
+const generateEmployeeRows = async (snapshots) => {
+  const results = await Promise.all(snapshots.docs.map(async (snapshot) => {
+    const employeeDocRef = firestore.collection(collectionName).doc(snapshot.id)
+    const data = snapshot.data();
+    const { hireDate, createdAt } = data;
+    const { birthDate, firstName, middleInitial, lastName, picture } = data.personalInfo;
+
+    const salary = (await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.salary, 1))[0];
+    const department = (await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.department, 1))[0];
+    const jobTitle = (await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.jobTitle, 1))[0];
+    const thumb = picture ? await storage.child(`${picture}_thumb`).getDownloadURL() : undefined;
+
+    return ({
+      ...data,
+      id: snapshot.id,
+      personalInfo: {
+        ...data.personalInfo,
+        fullName: `${firstName} ${middleInitial} ${lastName}`,
+        birthDate: { ...birthDate, date: getDateFromTimestamp(birthDate.date).format('MMM DD, YYYY') },
+        thumb
+      },
+      salary,
+      department,
+      jobTitle,
+      hireDate: { ...hireDate, date: getDateFromTimestamp(hireDate.date).format('MMM DD, YYYY') },
+      createdAt: getDateFromTimestamp(createdAt).format('MMM DD, YYYY')
+    });
+  }));
+
+  return results;
+};
+
 const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => {
   const pageSize = 3;
   const field = dotProp.get(cursor, 'field', 'pageKey.fullName');
@@ -290,38 +322,64 @@ const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => {
         break;
     }
 
-    const results = await Promise.all(snapshots.docs.map(async (snapshot) => {
+    return await generateEmployeeRows(snapshots);
+  } catch (error) {
+    throw error.message;
+  }
+};
+
+const getEmployeesByKeyword = async (keyword, isActive = true) => {
+  try {
+    const snapshots = await firestore
+      .collection(collectionName)
+      .where('isActive', '==', isActive)
+      .where('personalInfo.firstName', '>=', keyword)
+      .get();
+
+    return await generateEmployeeRows(snapshots);
+  } catch (error) {
+    throw error.message;
+  }
+};
+
+const getNewlyHiredEmployee = async () => {
+  try {
+    const snapshots = await firestore
+      .collection(collectionName)
+      .where('isActive', '==', true)
+      .orderBy('hireDate.date', 'desc')
+      .limit(1)
+      .get();
+
+    const employees = await Promise.all(snapshots.docs.map(async (snapshot) => {
       const employeeDocRef = firestore.collection(collectionName).doc(snapshot.id)
       const data = snapshot.data();
-      const { hireDate, createdAt } = data;
-      const { birthDate, firstName, middleInitial, lastName, picture } = data.personalInfo;
-
-      const salary = (await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.salary, 1))[0];
+      const { hireDate } = data;
+      const { firstName, middleInitial, lastName, picture } = data.personalInfo;
+  
       const department = (await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.department, 1))[0];
       const jobTitle = (await getEmployeeSubCollection(employeeDocRef, SUBCOLLECTION_NAMES.jobTitle, 1))[0];
-      const thumb = picture ? await storage.child(`${picture}_thumb`).getDownloadURL() : undefined;
-
+      const pictureUrl = picture ? await storage.child(picture).getDownloadURL() : undefined;
+  
       return ({
         ...data,
         id: snapshot.id,
         personalInfo: {
           ...data.personalInfo,
           fullName: `${firstName} ${middleInitial} ${lastName}`,
-          birthDate: { ...birthDate, date: getDateFromTimestamp(birthDate.date).format('MMM DD, YYYY') },
-          thumb
+          pictureUrl
         },
-        salary,
         department,
         jobTitle,
         hireDate: { ...hireDate, date: getDateFromTimestamp(hireDate.date).format('MMM DD, YYYY') },
-        createdAt: getDateFromTimestamp(createdAt).format('MMM DD, YYYY')
       });
     }));
-    return results;
+
+    return employees.length ? employees[0] : null;
   } catch (error) {
     throw error.message;
   }
-};
+}
 
 const getEmployeeById = async (id) => {
   try {
@@ -369,6 +427,8 @@ export {
   createEmployeeDocument,
   updateEmployeeDocument,
   getPageEmployees,
+  getNewlyHiredEmployee,
+  getEmployeesByKeyword,
   getEmployeeById,
-  getEmployeesCollectionCount
+  getEmployeesCollectionCount,
 };

@@ -1,8 +1,14 @@
-import { takeLatest, all, call, put, select } from 'redux-saga/effects';
+import { takeLatest, all, call, put, select, debounce } from 'redux-saga/effects';
 
 import { PageMode, pageKeys } from 'config/system.config';
 import { setNotificationError } from 'features/core/store';
-import { getPageEmployees, getEmployeesCollectionCount, getEmployeeById } from '../services';
+import {
+  getPageEmployees,
+  getEmployeesCollectionCount,
+  getEmployeeById,
+  getEmployeesByKeyword,
+  getNewlyHiredEmployee
+} from '../services';
 import {
   EmployeeActionTypes,
   fetchInitialPageEmployeesSuccess,
@@ -10,7 +16,13 @@ import {
   fetchNextPageEmployeesSuccess,
   fetchPreviousPageEmployeesSuccess,
   fetchEmployeeSuccess,
-  fetchEmployeeFailure
+  fetchEmployeeFailure,
+  fetchEmployeesByKeywordSuccess,
+  fetchEmployeesByKeywordFailure,
+  fetchEmployeesByKeywordCancelled,
+  fetchInitialPageEmployeesStart,
+  fetchNewlyHiredEmployeeFailure,
+  fetchNewlyHiredEmployeeSuccess
 } from './employee.actions';
 import { selectCurrentPage, selectPageEmployees } from './employee.selectors';
 
@@ -42,7 +54,51 @@ function* onFetchEmployeeStart() {
   );
 }
 
-function* onFetchInitialEmployeesStart() {
+function* onFetchNewlyHiredEmployeeStart() {
+  yield takeLatest(
+    EmployeeActionTypes.FETCH_NEWLY_HIRED_EMPLOYEE_START,
+    function* () {
+      try {
+        const employee = yield call(getNewlyHiredEmployee);
+        yield put(fetchNewlyHiredEmployeeSuccess(employee));
+      } catch (errorMessage) {
+        yield put(fetchNewlyHiredEmployeeFailure());
+        yield put(setNotificationError(errorMessage));
+      }
+    }
+  );
+}
+
+function* onFetchEmployeeByKeywordStart() {
+  yield debounce(
+    300,
+    EmployeeActionTypes.FETCH_EMPLOYEES_BY_KEYWORD_START,
+    function* ({ payload }) {
+      try {
+        const { keyword, pageKey, isActive, sortBy } = payload;
+
+        if (keyword.length < 2) {
+          yield put(fetchEmployeesByKeywordCancelled());
+
+          if (keyword.length < 1) {
+            yield put(fetchInitialPageEmployeesStart(pageKey, isActive, sortBy));
+            return;
+          }
+
+          return;
+        }
+
+        const employees = yield call(getEmployeesByKeyword, keyword, isActive);
+        yield put(fetchEmployeesByKeywordSuccess(employees));
+      } catch (errorMessage) {
+        yield put(fetchEmployeesByKeywordFailure());
+        yield put(setNotificationError(errorMessage));
+      }    
+    }  
+  );
+}
+
+function* onFetchInitialPageEmployeesStart() {
   yield takeLatest(
     EmployeeActionTypes.FETCH_INITIAL_PAGE_EMPLOYEES_START,
     function* ({ payload }) {
@@ -137,7 +193,9 @@ function* onFetchNextEmployeesStart() {
 export default function* employeeSagas() {
   yield all([
     call(onFetchEmployeeStart),
-    call(onFetchInitialEmployeesStart),
+    call(onFetchNewlyHiredEmployeeStart),
+    call(onFetchEmployeeByKeywordStart),
+    call(onFetchInitialPageEmployeesStart),
     call(onFetchPreviousEmployeesStart),
     call(onFetchNextEmployeesStart)
   ]);

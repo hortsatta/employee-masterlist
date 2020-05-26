@@ -7,6 +7,11 @@ const selectEmployee = createSelector(
   (employeeState) => employeeState.employee
 );
 
+const selectNewlyHiredEmployee = createSelector(
+  [selectEmployeeState],
+  (employeeState) => employeeState.newlyHiredEmployee
+);
+
 const selectPageEmployees = (iPage) => createSelector(
   [selectEmployeeState],
   (employeeState) => (
@@ -35,6 +40,7 @@ const selectIsPageLoading = createSelector(
 
 export {
   selectEmployee,
+  selectNewlyHiredEmployee,
   selectPageEmployees,
   selectCurrentPage,
   selectCurrentPageKey,
