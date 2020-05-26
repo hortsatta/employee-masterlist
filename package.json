@@ -1,6 +1,9 @@
 {
   "name": "employee-masterlist",
-  "version": "0.1.0",
+  "version": "0.9.9",
+  "description": "An employee master list app with basic encoding features",
+  "author": "Erwin Errol Calanuga",
+  "license": "ISC",
   "private": true,
   "dependencies": {
     "@blueprintjs/core": "^3.25.0",
