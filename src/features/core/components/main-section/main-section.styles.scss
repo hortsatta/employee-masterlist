@@ -5,9 +5,11 @@
 
   &.bp3-dark { background-color: $darkColorBg; }
 
-  &, .main-content { min-height: 100%; }
+  &, .main-content { min-height: 100vh; }
 
   .main-content {
-    padding: 2rem;
+    padding: 80px 2rem 2rem 2rem;
+    display: flex;
+    justify-content: center;
   }
 }

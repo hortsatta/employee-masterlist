@@ -1,17 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Drawer, Position } from '@blueprintjs/core';
+import { Drawer, Position, Spinner } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
 
 import styles from 'common/styles/styles.scss';
 import './side-navbar.styles.scss';
+import { selectIsLoading } from 'features/auth/store';
 import { ProfileNav } from 'features/user-account/components';
 import { selectExpandSideNav, toggleSideNav } from '../../store';
 import NavItem from '../nav-item/nav-item.component';
 
-const SideNavbar = ({ expandSideNav, toggleSideNavDispatch, children }) => (
+const SideNavbar = ({ expandSideNav, isLoading, toggleSideNavDispatch, children }) => (
   <div className='side-navbar-wrapper'>
     <Drawer
       className={`bp3-dark side-navbar ${expandSideNav ? 'expand' : ''}`}
@@ -32,7 +33,15 @@ const SideNavbar = ({ expandSideNav, toggleSideNavDispatch, children }) => (
           text='Menu'
           onClick={toggleSideNavDispatch}
         />
-        {children}
+        {
+          !isLoading
+            ? children
+            : (
+              <div className='menu-spinner'>
+                <Spinner />
+              </div>
+            )
+        }
       </div>
     </Drawer>
   </div>
@@ -41,6 +50,7 @@ const SideNavbar = ({ expandSideNav, toggleSideNavDispatch, children }) => (
 SideNavbar.propTypes = {
   expandSideNav: PropTypes.bool.isRequired,
   toggleSideNavDispatch: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node
@@ -48,7 +58,8 @@ SideNavbar.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  expandSideNav: selectExpandSideNav
+  expandSideNav: selectExpandSideNav,
+  isLoading: selectIsLoading
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,0 +1,29 @@
+.bp3-dialog {
+  &.bp3-dark {
+    .employee-history .history-content > div {
+      border-bottom: 1px dotted rgba(255,255,255,0.5);
+    }
+  }
+
+  .employee-history {
+    p {
+      margin-bottom: 1.5rem;
+    }
+
+    & .history-content {
+      > div {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px dotted rgba(0,0,0,0.5);
+  
+        &:not(:last-child) {
+          margin-bottom: 1rem;
+        }
+  
+        span small {
+          padding: 0 1rem;
+        }
+      }
+    }
+  }
+}

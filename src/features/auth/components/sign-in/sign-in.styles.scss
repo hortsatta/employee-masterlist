@@ -8,13 +8,8 @@
   }
 
   .bp3-form-content {
-    .input-field {
-      margin-bottom: 0.5rem;
-      width: 100%;
-
-      &:last-of-type {
-        margin-bottom: 1.5rem;
-      }
+    .input-field:last-of-type {
+      margin-bottom: 1.5rem;
     }
   }
 

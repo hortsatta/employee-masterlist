@@ -1,0 +1,23 @@
+.upsert-employee {
+  width: 600px;
+  display: inline-block;
+
+  .bp3-callout {
+    &:not(.controls) {
+      padding: 1.5rem 1rem 0.5rem 1rem;
+    }
+
+    h4.title {
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+  }
+
+  .bp3-callout.controls {
+    .bp3-form-content {
+      padding: 0 0.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}
