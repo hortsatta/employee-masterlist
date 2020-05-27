@@ -38,12 +38,12 @@ const navItemRenderer = ({ currentUser, key, to, rules, children, ...otherProps 
             },
             childKey
           ) => (
-            rules && rules.length
+            childRules && childRules.length
               ? (
                 <CanActivate
                   key={`sub-navitem-${childKey}`}
                   userRole={currentUser?.userRole}
-                  actions={rules}
+                  actions={childRules}
                   yes={() => (<NavItem key={`sub-navitem-${childKey}`} to={childTo ? `${to}${childTo}` : to} {...otherChildProps} />)}
                 />
               ) : <NavItem key={`sub-navitem-${childKey}`} to={childTo ? `${to}${childTo}` : to} {...otherChildProps} />
