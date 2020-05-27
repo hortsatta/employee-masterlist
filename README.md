@@ -19,6 +19,7 @@ npm start
 ```
 
 **Additional Instructions**
+
 Use the command below to deploy project, files ready for deployment are stationed at the `build` folder located at the root of the project.
 ```bash
 # build app
