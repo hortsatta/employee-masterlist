@@ -60,7 +60,7 @@ const UpsertEmployeeForm = ({
 
   const executeFinalStep = () => {
     fetchInitialPageEmployeesStartDispatch(true);
-    setTimeout(() => navigateToEmployeeList(), 500);
+    setTimeout(() => navigateToEmployeeList(), 800);
   };
 
   const formik = useFormik({
