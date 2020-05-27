@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import { firestore, getDateFromTimestamp } from 'common/utils';
 
 const collectionName = 'titles';
@@ -15,7 +17,7 @@ const getJobTitlesByDepartmentIds = async (ids, isActive = true) => {
       return {
         ...data,
         id: snapshot.id,
-        createdAt: getDateFromTimestamp(createdAt)
+        createdAt: createdAt ? getDateFromTimestamp(createdAt) : moment()
       };
     });
   } catch (error) {
@@ -35,7 +37,7 @@ const getJobTitleById = async (id) => {
     return {
       ...data,
       id: snapshot.id,
-      createdAt: getDateFromTimestamp(createdAt)
+      createdAt: createdAt ? getDateFromTimestamp(createdAt) : moment()
     };
   } catch (error) {
     throw error.message;

@@ -280,7 +280,7 @@ const generateEmployeeRows = async (snapshots) => {
       department,
       jobTitle,
       hireDate: { ...hireDate, date: getDateFromTimestamp(hireDate.date).format('MMM DD, YYYY') },
-      createdAt: getDateFromTimestamp(createdAt).format('MMM DD, YYYY')
+      createdAt: createdAt ? getDateFromTimestamp(createdAt).format('MMM DD, YYYY') : moment().format('MMM DD, YYYY')
     });
   }));
 
@@ -288,7 +288,7 @@ const generateEmployeeRows = async (snapshots) => {
 };
 
 const getPageEmployees = async (cursor, isActive = true, sortBy = 'asc') => {
-  const pageSize = 3;
+  const pageSize = 10;
   const field = dotProp.get(cursor, 'field', 'pageKey.fullName');
   let snapshots;
 
@@ -411,7 +411,7 @@ const getEmployeeById = async (id) => {
       department: { ...department[0], history: department },
       jobTitle: { ...jobTitle[0], history: jobTitle },
       hireDate: { ...hireDate, date: getDateFromTimestamp(hireDate.date).format('MMM DD, YYYY') },
-      createdAt: getDateFromTimestamp(createdAt).format('MMM DD, YYYY')
+      createdAt: createdAt ? getDateFromTimestamp(createdAt).format('MMM DD, YYYY') : moment().format('MMM DD, YYYY')
     });
   } catch (error) {
     throw error.message;
