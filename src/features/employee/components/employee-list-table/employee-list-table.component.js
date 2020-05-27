@@ -8,9 +8,12 @@ import PropTypes from 'prop-types';
 import './employee-list-table.styles.scss';
 import employeePlaceholder from 'assets/employee-placeholder.png';
 import employeePlaceholder2 from 'assets/employee-placeholder-2.png';
+import { employees as rbacEmployees } from 'config/rbac/rbac.types';
 import { pageKeys } from 'config/system.config';
 import { navigateToUpdateEmployee } from 'common/services';
+import { CanActivate } from 'common/guards';
 import { DataTable, DataTableHeader, DataTableFooter, IconButton } from 'common/components';
+import { selectCurrentUser } from 'features/auth/store';
 import { selectAllDepartmentsObj } from 'features/department/store';
 import { selectAllJobTitlesObj } from 'features/job-title/store';
 import {
@@ -38,6 +41,7 @@ const EmployeeListTable = ({
   isPageLoading,
   departments,
   jobTitles,
+  currentUser,
   currentPage,
   numRows,
   dataSource,
@@ -54,9 +58,23 @@ const EmployeeListTable = ({
   const cellMenuRender = (i) => (
     <Menu>
       <MenuItem text='View' icon={IconNames.ZOOM_IN} onClick={() => onViewClick(dataSource[i].id)}/>
-      <MenuItem text='Update' icon={IconNames.HIGHLIGHT} onClick={() => navigateToUpdateEmployee(dataSource[i].id)} />
-      <MenuDivider />
-      <MenuItem text='Remove' intent={Intent.DANGER} icon={IconNames.TRASH} />
+      <CanActivate
+        userRole={currentUser?.userRole}
+        actions={[rbacEmployees.UPDATE]}
+        yes={() => (
+          <MenuItem text='Update' icon={IconNames.HIGHLIGHT} onClick={() => navigateToUpdateEmployee(dataSource[i].id)} />
+        )}
+      />
+      <CanActivate
+        userRole={currentUser?.userRole}
+        actions={[rbacEmployees.DELETE]}
+        yes={() => (
+          <>
+            <MenuDivider />
+            <MenuItem text='Remove' intent={Intent.DANGER} icon={IconNames.TRASH} />
+          </>
+        )}
+      />
     </Menu>
   );
 
@@ -148,6 +166,7 @@ EmployeeListTable.propTypes = {
   isPageLoading: PropTypes.bool,
   departments: PropTypes.shape().isRequired,
   jobTitles: PropTypes.shape().isRequired,
+  currentUser: PropTypes.shape(),
   currentPage: PropTypes.shape({ index: PropTypes.number, isLast: PropTypes.bool }),
   numRows: PropTypes.number,
   dataSource: PropTypes.arrayOf(PropTypes.shape()),
@@ -162,6 +181,7 @@ const mapStateToProps = createStructuredSelector({
   isPageLoading: selectIsPageLoading,
   departments: selectAllDepartmentsObj,
   jobTitles: selectAllJobTitlesObj,
+  currentUser: selectCurrentUser,
   currentPage: selectCurrentPage()
 });
 
