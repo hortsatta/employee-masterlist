@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { FormGroup, InputGroup, Button, Classes } from '@blueprintjs/core';
+import { createStructuredSelector } from 'reselect';
+import { FormGroup, InputGroup, Button, Classes, Intent } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import PropTypes from 'prop-types';
 
 import './sign-in.styles.scss';
-import { InputButton } from 'common/components';
-import { signInStart } from 'features/auth/store';
+import { WithProcessing } from 'common/containers';
+import { IconButton } from 'common/components';
+import { signInStart, selectIsLoading } from 'features/auth/store';
 
-const SignIn = ({ signIn, isDialog }) => {
-  const [fields, setFields] = useState({ username: '', password: '', showPassword: false });
-  const { username, password, showPassword } = fields;
+const SignIn = ({ signIn, isDialog, isLoading, isProcessing, doProcess }) => {
+  const [fields, setFields] = useState({ email: '', password: '', showPassword: false });
+  const { email, password, showPassword } = fields;
 
   const lockButton = (
-    <InputButton
+    <IconButton
+      minimal
       content={`${showPassword ? 'Hide' : 'Show'} Password`}
       icon={showPassword ? IconNames.UNLOCK : IconNames.LOCK}
       onClick={() => (
@@ -28,7 +32,8 @@ const SignIn = ({ signIn, isDialog }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    signIn({ username, password });
+    doProcess();
+    signIn({ email, password });
   };
 
   return (
@@ -36,36 +41,40 @@ const SignIn = ({ signIn, isDialog }) => {
       className={`sign-in ${isDialog ? Classes.DIALOG_BODY : ''}`}
       onSubmit={handleSubmit}
     >
-      <FormGroup>
+      <FormGroup disabled={isProcessing || isLoading}>
         <InputGroup
           className='input-field'
-          name='username'
-          leftIcon={IconNames.PERSON}
-          placeholder='Username'
-          value={username}
+          name='email'
+          type='email'
+          disabled={isProcessing || isLoading}
+          leftIcon={IconNames.ENVELOPE}
+          placeholder='Email'
+          value={email}
           onChange={handleChange}
           required
         />
         <InputGroup
           className='input-field'
           name='password'
+          type={showPassword ? 'text' : 'password'}
+          disabled={isProcessing || isLoading}
           leftIcon={IconNames.KEY}
           placeholder='Password'
           rightElement={lockButton}
           value={password}
           onChange={handleChange}
-          type={showPassword ? 'text' : 'password'}
           required
         />
       </FormGroup>
       <div className={isDialog ? Classes.DIALOG_FOOTER : ''}>
-        <div className={isDialog ? Classes.DIALOG_FOOTER_ACTIONS: ''}>
+        <div className={isDialog ? Classes.DIALOG_FOOTER_ACTIONS : ''}>
           <Button
             className='submit-button'
             icon={IconNames.LOG_IN}
-            intent='primary'
+            intent={Intent.PRIMARY}
             text='Sign In'
             type='submit'
+            loading={isProcessing || isLoading}
             large
           />
         </div>
@@ -76,14 +85,21 @@ const SignIn = ({ signIn, isDialog }) => {
 
 SignIn.propTypes = {
   signIn: PropTypes.func.isRequired,
-  isDialog: PropTypes.bool
+  isDialog: PropTypes.bool,
+  isLoading: PropTypes.bool,
+  isProcessing: PropTypes.bool,
+  doProcess: PropTypes.func
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  signIn: () => dispatch(signInStart())
+const mapStateToProps = createStructuredSelector({
+  isLoading: selectIsLoading
 });
 
-export default connect(
-  null,
-  mapDispatchToProps
+const mapDispatchToProps = (dispatch) => ({
+  signIn: (credentials) => dispatch(signInStart(credentials))
+});
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  WithProcessing
 )(SignIn);

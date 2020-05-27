@@ -1,0 +1,11 @@
+.with-spinner {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 0;
+  top: 0;
+  height: 85%;
+  width: 100%;
+  transition: 0.2s padding ease;
+}

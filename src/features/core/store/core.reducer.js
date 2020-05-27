@@ -2,10 +2,12 @@ import { CoreActionTypes } from './core.actions';
 
 const INITIAL_STATE = {
   expandSideNav: false,
+  error: null,
+  success: null,
   darkMode: false
 };
 
-const coreReducer = (state = INITIAL_STATE, action) => {
+export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case CoreActionTypes.TOGGLE_SIDENAV:
       return {
@@ -17,9 +19,17 @@ const coreReducer = (state = INITIAL_STATE, action) => {
         ...state,
         darkMode: !state.darkMode
       };
+    case CoreActionTypes.SET_NOTIFICATION_ERROR:
+      return {
+        ...state,
+        error: action.payload
+      };
+    case CoreActionTypes.SET_NOTIFICATION_SUCCESS:
+      return {
+        ...state,
+        success: action.payload
+      };
     default:
       return state;
   }
 };
-
-export default coreReducer;

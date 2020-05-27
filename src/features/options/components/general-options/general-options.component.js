@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import './general-options.styles.scss';
 import { toggleDarkMode, selectDarkMode } from 'features/core/store';
 
-const GeneralOptions = ({ darkMode, toggleDarkModeDispatch }) => (
+const GeneralOptions = ({ darkMode, dispatch }) => (
   <FormGroup className={`${darkMode ? 'bp3-dark' : ''} general-options`}>
     <Switch
       className='night-mode-switch'
@@ -20,25 +20,18 @@ const GeneralOptions = ({ darkMode, toggleDarkModeDispatch }) => (
           <small>Night Mode</small>
         </span>
       )}
-      onChange={toggleDarkModeDispatch}
+      onChange={() => dispatch(toggleDarkMode())}
     />
   </FormGroup>
 );
 
 GeneralOptions.propTypes = {
   darkMode: PropTypes.bool.isRequired,
-  toggleDarkModeDispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired
 };
 
 const mapStateToProps = createStructuredSelector({
   darkMode: selectDarkMode
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  toggleDarkModeDispatch: () => dispatch(toggleDarkMode())
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(GeneralOptions);
+export default connect(mapStateToProps)(GeneralOptions);

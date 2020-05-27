@@ -5,7 +5,15 @@ import PropTypes from 'prop-types';
 
 import styles from 'common/styles/styles.scss';
 
-const NavItem = ({ className, icon, to, parentUrl, location, staticContext, ...otherProps }) => {
+const NavItem = ({
+  className,
+  icon,
+  to,
+  parentUrl,
+  location,
+  staticContext,
+  ...otherProps
+}) => {
   const isUrlMatch = () => {
     const { pathname } = location;
     // If component is parent link, check if parent url is present in current url
@@ -34,10 +42,9 @@ const NavItem = ({ className, icon, to, parentUrl, location, staticContext, ...o
     />
   );
 
-  return (
-    to
-      ? <Link to={to}><NavButton /></Link>
-      : <NavButton />
+  return (to
+    ? <Link to={to}><NavButton /></Link>
+    : <NavButton />
   );
 };
 
@@ -45,6 +52,7 @@ NavItem.propTypes = {
   className: PropTypes.string,
   icon: PropTypes.string,
   to: PropTypes.string,
+  rules: PropTypes.arrayOf(PropTypes.string),
   parentUrl: PropTypes.string,
   location: PropTypes.shape({
     pathname: PropTypes.string.isRequired

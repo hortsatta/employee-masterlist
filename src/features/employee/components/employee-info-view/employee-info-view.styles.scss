@@ -1,0 +1,20 @@
+.employee-info-view {
+  display: flex;
+  flex-wrap: wrap;
+
+  & > .text-field {
+    flex: 0 0 100%;
+
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+
+    &.row-2 {
+      flex: 0 0 50%;
+    }
+
+    &.row-3 {
+      flex: 0 0 33.33%;
+    }
+  }
+}
