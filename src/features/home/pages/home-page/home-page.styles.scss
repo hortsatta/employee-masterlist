@@ -1,9 +1,10 @@
 .home-page {
   padding-top: 72px;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
 
   .app-logo {
@@ -132,6 +133,32 @@
         margin: 0;
         font-size: 16px;
         font-weight: 400;
+      }
+    }
+  }
+
+  .sample-users {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    opacity: 0.8;
+
+    p, h4.bp3-heading {
+      font-size: 13px;
+    }
+
+    p {
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+
+    div {
+      text-align: right;
+
+      h4.bp3-heading {
+        margin: 0;
+        font-weight: 400;
+        line-height: 1.5;
       }
     }
   }
