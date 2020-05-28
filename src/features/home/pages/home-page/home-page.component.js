@@ -70,10 +70,10 @@ const HomePage = ({
         </div>
       </div>
       <div className='sample-users'>
-        <p>Use the following accounts</p>
+        <p>Sign-in using the following credentials</p>
         <div>
-          <H4>user1 · user1qweasdzxc</H4>
-          <H4>user2 · user2qweasdzxc</H4>
+          <H4>user1@gmail.com · user1qweasdzxc</H4>
+          <H4>user2@gmail.com · user2qweasdzxc</H4>
         </div>
       </div>
     </div>
