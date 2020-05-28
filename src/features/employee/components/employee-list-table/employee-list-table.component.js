@@ -134,6 +134,25 @@ const EmployeeListTable = ({
     }
   ];
 
+  const getCellData = (rowIndex, colIndex) => {
+    switch (colIndex) {
+      case 0:
+        return dataSource[rowIndex].personalInfo.thumb;
+      case 1:
+        return dataSource[rowIndex].personalInfo.fullName;
+      case 2:
+        const titleId = dataSource[rowIndex].jobTitle.titleId;
+        return jobTitles[titleId.toLowerCase()].name;
+      case 3:
+        const departmentId = dataSource[rowIndex].department.departmentId;
+        return departments[departmentId.toLowerCase()].alias;
+      case 4:
+        return dataSource[rowIndex].hireDate.date;
+      default:
+        break;
+    }
+  }
+
   return (
     <Callout className='employee-list-wrapper'>
       <DataTableHeader
@@ -147,6 +166,7 @@ const EmployeeListTable = ({
         columns={columns}
         columnWidths={[50, 330, 250, 250, 120]}
         cellMenu={cellMenuRender}
+        getCellData={getCellData}
       />
       <DataTableFooter
         isPage

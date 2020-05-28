@@ -38,7 +38,15 @@ const menuColumnRender = (cellData) => {
   return (<Column className='action-column' name={<Icon icon={IconNames.EDIT} />} cellRenderer={cellRenderer} />);
 };
 
-const DataTable = ({ className, isLoading, numRows, columns, columnWidths, cellMenu }) => {
+const DataTable = ({
+  className,
+  isLoading,
+  numRows,
+  columns,
+  columnWidths,
+  cellMenu,
+  getCellData
+}) => {
   const getColumn = (name, i, cellData, handleSorting) => {
     const cellRenderer = (iRow) => (
       <Cell>{cellData(iRow)}</Cell>
@@ -63,7 +71,7 @@ const DataTable = ({ className, isLoading, numRows, columns, columnWidths, cellM
 
   const bodyContextMenuRenderer = (context) => (
     <Menu>
-      <CopyCellsMenuItem text='Copy' icon={IconNames.DUPLICATE} context={context} />
+      <CopyCellsMenuItem text='Copy' icon={IconNames.DUPLICATE} getCellData={getCellData} context={context} />
     </Menu>
   );
 
@@ -96,7 +104,8 @@ DataTable.propTypes = {
   numRows: PropTypes.number,
   columns: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   columnWidths: PropTypes.arrayOf(PropTypes.number),
-  cellMenu: PropTypes.func
+  cellMenu: PropTypes.func,
+  getCellData: PropTypes.func.isRequired
 };
 
 export default DataTable;
