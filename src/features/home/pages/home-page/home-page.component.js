@@ -40,12 +40,11 @@ const HomePage = ({
   }, [isEmployeeLoading, newlyHiredEmployee]);
 
   const { personalInfo, jobTitle } = newlyHiredEmployee || {};
-  const { fullName, gender, pictureUrl } = personalInfo || {};
+  const { fullName, gender } = personalInfo || {};
 
   return (
     <div className='home-page'>
       <div className={`app-logo ${hasAnim ? 'rise' : ''}`}>
-        <img src={skate} alt='gif' />
         <H1>
           Employee
           <b>Masterlist</b>
@@ -59,7 +58,7 @@ const HomePage = ({
             <img className='sparkle' src={sparkle} alt='sparkle' />
             <img
               className='employee'
-              src={pictureUrl || genderPictureSrc[gender?.toLowerCase() || 'female']}
+              src={genderPictureSrc[gender?.toLowerCase() || 'female']}
               alt='employee'
             />
           </div>

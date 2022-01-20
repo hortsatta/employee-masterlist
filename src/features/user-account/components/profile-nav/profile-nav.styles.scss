@@ -23,8 +23,13 @@
       height: 100%;
     }
 
-    .profile-spinner  svg,
     .profile-picture {
+      background-color: #fff;
+      width: 51px;
+      height: 51px;
+    }
+
+    .profile-spinner svg {
       width: 51px;
       height: 51px;
     }

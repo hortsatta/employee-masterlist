@@ -26,13 +26,13 @@ const genderPictureSrc = {
 
 const EmployeeProfile = ({ user, employee, userRoles, jobTitles, signOut }) => {
   const { userRole } = user;
-  const { personalInfo: { fullName, gender, picture }, jobTitle: { titleId } } = employee;
+  const { personalInfo: { fullName, gender }, jobTitle: { titleId } } = employee;
   const jobTitle = jobTitles[titleId.toLowerCase()]?.name || '—';
   const role = userRoles[userRole]?.name || '—';
   return (
     <>
       <div className='profile-picture'>
-        <img src={picture || genderPictureSrc[gender.toLowerCase()]} alt='employee-profile' />
+        <img src={genderPictureSrc[gender.toLowerCase()]} alt='employee-profile' />
       </div>
       <div className='profile-content'>
         <H4 className='bp3-heading'>{fullName}</H4>
