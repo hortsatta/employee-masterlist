@@ -1,6 +1,6 @@
 {
   "name": "employee-masterlist",
-  "version": "0.9.9",
+  "version": "1.0.1",
   "description": "An employee master list app with basic encoding features",
   "author": "Erwin Errol Calanuga",
   "license": "ISC",
@@ -22,7 +22,7 @@
     "history": "^4.10.1",
     "jimp": "^0.10.3",
     "moment": "^2.24.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

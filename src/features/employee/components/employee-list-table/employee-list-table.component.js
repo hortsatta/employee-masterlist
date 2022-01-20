@@ -79,8 +79,7 @@ const EmployeeListTable = ({
   );
 
   const generateImgSrc = (index) => {
-    const { gender, thumb } = dataSource[index].personalInfo;
-    if (thumb) { return thumb; }
+    const { gender } = dataSource[index].personalInfo;
     return gender.toLowerCase() === 'male' ? employeePlaceholder2 : employeePlaceholder;
   };
 
@@ -110,7 +109,7 @@ const EmployeeListTable = ({
       name: (<Icon icon={IconNames.MUGSHOT} />),
       cellData: (rowIndex) => (
         <img
-          className={dataSource[rowIndex].personalInfo?.thumb ? '' : 'placeholder'}
+          className='placeholder'
           src={generateImgSrc(rowIndex)}
           alt='employee-thumb'
         />

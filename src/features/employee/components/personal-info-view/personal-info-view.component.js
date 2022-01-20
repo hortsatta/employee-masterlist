@@ -23,15 +23,14 @@ const PersonalInfoView = ({ isLoading, employee = {} }) => {
     currentAddress,
     homeAddress,
     phones,
-    emails,
-    picture
+    emails
   } = personalInfo || {};
 
   return (
     <div className='personal-info-view'>
       <div className={`profile-picture ${isLoading ? 'loading' : ''}`}>
         {isLoading && <Spinner size={Spinner.SIZE_LARGE} />}
-        <img src={picture || genderPictureSrc[gender?.toLowerCase() || 'female']} alt='employee' />
+        <img src={genderPictureSrc[gender?.toLowerCase() || 'female']} alt='employee' />
       </div>
       <Divider />
       <div className='fields'>

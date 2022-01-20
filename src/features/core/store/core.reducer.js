@@ -4,7 +4,7 @@ const INITIAL_STATE = {
   expandSideNav: false,
   error: null,
   success: null,
-  darkMode: false
+  darkMode: true
 };
 
 export default (state = INITIAL_STATE, action) => {
